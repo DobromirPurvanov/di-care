@@ -41,7 +41,7 @@ export default function Services() {
       className="relative z-10"
       style={{
         padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)',
-        background: 'linear-gradient(180deg, transparent 0%, rgba(99,102,241,0.02) 40%, transparent 100%)',
+        background: 'linear-gradient(180deg, transparent 0%, rgba(200,160,94,0.03) 40%, transparent 100%)',
       }}
     >
       <div className="max-w-6xl mx-auto">
@@ -53,7 +53,7 @@ export default function Services() {
           Нашите услуги
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'rgba(255,255,255,0.05)' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'rgba(242,237,226,0.05)' }}>
           {services.map((s, i) => (
             <div
               key={i}
@@ -67,14 +67,14 @@ export default function Services() {
                   className="w-full h-full object-cover opacity-30 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"
                   loading="lazy"
                 />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%)' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0c1614 0%, rgba(12,22,20,0.75) 40%, transparent 100%)' }} />
               </div>
 
               <div className="relative z-10 h-full flex flex-col justify-end p-6" style={{ minHeight: '280px' }}>
-                <h3 className="font-light text-base tracking-wider uppercase group-hover:text-indigo-300 transition-colors duration-300">
+                <h3 className="font-light text-base tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
                   {s.title}
                 </h3>
-                <p className="text-sm mt-2 font-light" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-sm mt-2 font-light" style={{ color: 'rgba(242,237,226,0.4)' }}>
                   {s.desc}
                 </p>
                 <div className="flex items-center gap-2 mt-4 text-xs tracking-wider uppercase opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300"

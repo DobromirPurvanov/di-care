@@ -58,7 +58,7 @@ export default function Equipment() {
       className="relative z-10"
       style={{
         padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)',
-        background: 'linear-gradient(180deg, transparent 0%, rgba(99,102,241,0.02) 40%, transparent 100%)',
+        background: 'linear-gradient(180deg, transparent 0%, rgba(200,160,94,0.03) 40%, transparent 100%)',
       }}
     >
       <div className="max-w-6xl mx-auto">
@@ -69,7 +69,7 @@ export default function Equipment() {
         >
           Апаратура
         </h2>
-        <p className="text-center text-xs tracking-[0.15em] uppercase mb-16" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <p className="text-center text-xs tracking-[0.15em] uppercase mb-16" style={{ color: 'rgba(242,237,226,0.3)' }}>
           Световно признати лазерни системи
         </p>
 
@@ -77,14 +77,14 @@ export default function Equipment() {
           {equipment.map((eq, i) => (
             <div
               key={i}
-              className="eq-card group flex flex-col sm:flex-row overflow-hidden opacity-0 border transition-colors duration-500 hover:border-indigo-500/25"
+              className="eq-card group flex flex-col sm:flex-row overflow-hidden opacity-0 border transition-colors duration-500 hover:border-[#c8a05e]/30"
               style={{
-                background: 'rgba(255,255,255,0.015)',
-                borderColor: 'rgba(255,255,255,0.05)',
+                background: 'rgba(242,237,226,0.015)',
+                borderColor: 'rgba(242,237,226,0.05)',
                 transform: 'translateY(30px)',
               }}
             >
-              <div className="sm:w-2/5 overflow-hidden flex items-center justify-center p-4" style={{ minHeight: '180px', background: 'rgba(255,255,255,0.03)' }}>
+              <div className="sm:w-2/5 overflow-hidden flex items-center justify-center p-4" style={{ minHeight: '180px', background: 'rgba(242,237,226,0.03)' }}>
                 <img
                   src={eq.img}
                   alt={eq.name}
@@ -93,16 +93,16 @@ export default function Equipment() {
                 />
               </div>
               <div className="sm:w-3/5 p-6 flex flex-col justify-center">
-                <h3 className="font-light text-sm tracking-[0.1em] uppercase group-hover:text-indigo-300 transition-colors">
+                <h3 className="font-light text-sm tracking-[0.1em] uppercase group-hover:text-[#ddbd82] transition-colors">
                   {eq.name}
                 </h3>
-                <p className="text-xs mt-2 font-light leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-xs mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.4)' }}>
                   {eq.desc}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {eq.features.map((f, j) => (
                     <span key={j} className="text-[10px] px-2 py-1 tracking-wider uppercase border"
-                      style={{ borderColor: 'rgba(99,102,241,0.2)', color: 'rgba(129,140,248,0.7)' }}>
+                      style={{ borderColor: 'rgba(200,160,94,0.3)', color: 'rgba(221,189,130,0.8)' }}>
                       {f}
                     </span>
                   ))}

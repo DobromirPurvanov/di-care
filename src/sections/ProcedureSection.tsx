@@ -44,7 +44,7 @@ export default function ProcedureSection() {
         </h2>
         <p
           className="text-center text-xs tracking-[0.15em] uppercase mb-12"
-          style={{ color: 'rgba(255,255,255,0.3)' }}
+          style={{ color: 'rgba(242,237,226,0.3)' }}
         >
           Завъртете сферата, за да разгледате всички процедури
         </p>

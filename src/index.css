@@ -6,16 +6,16 @@
 
 @layer base {
   :root {
-    --bg: #000000;
-    --bg-elevated: #0a0a0a;
-    --bg-card: #111111;
-    --text: #ffffff;
-    --text-secondary: rgba(255,255,255,0.5);
-    --text-muted: rgba(255,255,255,0.3);
-    --accent: #6366f1;
-    --accent-light: #818cf8;
-    --accent-glow: rgba(99,102,241,0.3);
-    --border: rgba(255,255,255,0.08);
+    --bg: #0c1614;
+    --bg-elevated: #101d1a;
+    --bg-card: #14231f;
+    --text: #f2ede2;
+    --text-secondary: rgba(242,237,226,0.55);
+    --text-muted: rgba(242,237,226,0.32);
+    --accent: #c8a05e;
+    --accent-light: #ddbd82;
+    --accent-glow: rgba(200,160,94,0.3);
+    --border: rgba(242,237,226,0.08);
   }
 
   * {
@@ -39,37 +39,37 @@
   }
 
   ::selection {
-    background: rgba(99,102,241,0.4);
-    color: #fff;
+    background: rgba(200,160,94,0.4);
+    color: #f2ede2;
   }
 
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+  ::-webkit-scrollbar-thumb { background: rgba(200,160,94,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(200,160,94,0.55); }
 }
 
 @layer components {
   .text-gradient {
-    background: linear-gradient(135deg, #fff 30%, #818cf8 70%);
+    background: linear-gradient(135deg, #f2ede2 30%, #ddbd82 70%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .glow-text {
-    text-shadow: 0 0 60px rgba(99,102,241,0.4), 0 0 120px rgba(99,102,241,0.15);
+    text-shadow: 0 0 60px rgba(200,160,94,0.4), 0 0 120px rgba(200,160,94,0.15);
   }
 
   .label-tag {
     display: inline-flex;
     padding: 8px 14px;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(242,237,226,0.12);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.6);
+    color: rgba(242,237,226,0.6);
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
@@ -77,8 +77,8 @@
   }
 
   .label-tag:hover {
-    border-color: rgba(99,102,241,0.5);
-    color: #fff;
-    background: rgba(99,102,241,0.08);
+    border-color: rgba(200,160,94,0.55);
+    color: #f2ede2;
+    background: rgba(200,160,94,0.08);
   }
 }

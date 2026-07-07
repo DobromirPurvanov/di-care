@@ -50,7 +50,7 @@ export default function Hero() {
           alt="Dr. Di Clinic"
           className="w-full h-full object-cover opacity-20"
         />
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, #000 70%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(12,22,20,0.35) 0%, #0c1614 70%)' }} />
       </div>
 
       <div className="relative px-6" style={{ marginTop: '-2vh' }}>
@@ -73,8 +73,8 @@ export default function Hero() {
           {brands.map((b) => (
             <span
               key={b}
-              className="text-[11px] tracking-[0.2em] uppercase pb-1 cursor-default transition-all duration-300 hover:text-white"
-              style={{ color: 'rgba(255,255,255,0.3)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+              className="text-[11px] tracking-[0.2em] uppercase pb-1 cursor-default transition-all duration-300 hover:text-[#f2ede2]"
+              style={{ color: 'rgba(242,237,226,0.3)', borderBottom: '1px solid rgba(242,237,226,0.08)' }}
             >
               {b}
             </span>
@@ -87,8 +87,8 @@ export default function Hero() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 cursor-pointer z-20"
         onClick={() => document.getElementById('procedures')?.scrollIntoView({ behavior: 'smooth' })}
       >
-        <span className="text-[9px] tracking-[0.4em] uppercase" style={{ color: 'rgba(255,255,255,0.2)' }}>Scroll</span>
-        <ChevronDown size={14} style={{ color: 'rgba(255,255,255,0.2)', animation: 'bounce 2s infinite' }} />
+        <span className="text-[9px] tracking-[0.4em] uppercase" style={{ color: 'rgba(242,237,226,0.2)' }}>Scroll</span>
+        <ChevronDown size={14} style={{ color: 'rgba(242,237,226,0.2)', animation: 'bounce 2s infinite' }} />
       </div>
 
       <style>{`

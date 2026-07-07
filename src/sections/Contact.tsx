@@ -41,7 +41,7 @@ export default function Contact() {
           Контакти
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: 'rgba(255,255,255,0.05)' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: 'rgba(242,237,226,0.05)' }}>
           {[
             { icon: MapPin, label: 'Адрес', value: 'гр. Варна, ул. Любен Каравелов № 71, Партер' },
             { icon: Phone, label: 'Телефон', value: '+359 882 708 081', href: 'tel:+359882708081' },
@@ -55,17 +55,17 @@ export default function Contact() {
             >
               <div className="flex items-center gap-3 mb-4">
                 <item.icon size={15} style={{ color: 'var(--accent-light)' }} />
-                <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.3)' }}>
                   {item.label}
                 </span>
               </div>
               {item.href ? (
-                <a href={item.href} className="font-light hover:text-indigo-300 transition-colors duration-300"
-                  style={{ color: 'rgba(255,255,255,0.8)' }}>
+                <a href={item.href} className="font-light hover:text-[#ddbd82] transition-colors duration-300"
+                  style={{ color: 'rgba(242,237,226,0.8)' }}>
                   {item.value}
                 </a>
               ) : (
-                <p className="font-light" style={{ color: 'rgba(255,255,255,0.8)' }}>{item.value}</p>
+                <p className="font-light" style={{ color: 'rgba(242,237,226,0.8)' }}>{item.value}</p>
               )}
             </div>
           ))}
@@ -74,7 +74,7 @@ export default function Contact() {
         {/* Social + CTA */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-4">
-            <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.2)' }}>
               Последвайте ни
             </span>
             {[
@@ -86,17 +86,17 @@ export default function Contact() {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 flex items-center justify-center border transition-all duration-300 hover:border-indigo-500/40 hover:bg-indigo-500/10"
-                style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+                className="w-10 h-10 flex items-center justify-center border transition-all duration-300 hover:border-[#c8a05e]/40 hover:bg-[#c8a05e]/10"
+                style={{ borderColor: 'rgba(242,237,226,0.08)' }}
               >
-                <s.icon size={15} style={{ color: 'rgba(255,255,255,0.5)' }} />
+                <s.icon size={15} style={{ color: 'rgba(242,237,226,0.5)' }} />
               </a>
             ))}
           </div>
 
           <a
             href="tel:+359882708081"
-            className="px-8 py-3 bg-white text-black text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:bg-indigo-400 hover:text-white"
+            className="px-8 py-3 bg-[#c8a05e] text-[#0c1614] text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:bg-[#ddbd82] hover:text-[#0c1614]"
           >
             Запази час
           </a>

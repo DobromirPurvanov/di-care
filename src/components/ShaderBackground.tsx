@@ -89,16 +89,16 @@ export default function ShaderBackground() {
           shoot += trail * 0.8;
         }
 
-        vec3 color = vec3(0.0);
-        // Blue-indigo glow
-        color += vec3(0.25, 0.27, 0.95) * glow;
-        color += vec3(0.15, 0.12, 0.65) * glow2;
+        vec3 color = vec3(0.047, 0.086, 0.078);
+        // Gold-brass glow
+        color += vec3(0.78, 0.58, 0.28) * glow;
+        color += vec3(0.10, 0.36, 0.30) * glow2;
         // Subtle nebula
-        color += vec3(0.12, 0.14, 0.6) * nebula;
+        color += vec3(0.10, 0.32, 0.26) * nebula;
         // Stars
-        color += vec3(0.9, 0.9, 1.0) * stars * 0.7;
-        // Shooting stars with blue tint
-        color += vec3(0.5, 0.65, 1.0) * shoot;
+        color += vec3(1.0, 0.95, 0.84) * stars * 0.7;
+        // Shooting stars with champagne tint
+        color += vec3(1.0, 0.85, 0.55) * shoot;
 
         gl_FragColor = vec4(color, 1.0);
       }

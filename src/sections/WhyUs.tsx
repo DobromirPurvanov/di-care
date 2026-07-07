@@ -134,7 +134,7 @@ export default function WhyUs() {
             <p
               className="max-w-xl font-light leading-relaxed px-4"
               style={{
-                color: 'rgba(255,255,255,0.5)',
+                color: 'rgba(242,237,226,0.5)',
                 fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
               }}
             >
@@ -153,10 +153,10 @@ export default function WhyUs() {
             style={{ maxHeight: '450px' }}
             loading="lazy"
           />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #000 0%, transparent 60%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0c1614 0%, transparent 60%)' }} />
           <div className="absolute bottom-0 left-0 p-8">
-            <p className="text-xs tracking-[0.3em] uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Dr. Di Clinic</p>
-            <p className="text-xs tracking-wider mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>Варна, България</p>
+            <p className="text-xs tracking-[0.3em] uppercase" style={{ color: 'rgba(242,237,226,0.4)' }}>Dr. Di Clinic</p>
+            <p className="text-xs tracking-wider mt-1" style={{ color: 'rgba(242,237,226,0.2)' }}>Варна, България</p>
           </div>
         </div>
       </div>

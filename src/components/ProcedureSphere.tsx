@@ -91,10 +91,10 @@ export default function ProcedureSphere() {
       c.width = size; c.height = size
       const ctx = c.getContext('2d')!
       const grad = ctx.createRadialGradient(size/2, size/2, 2, size/2, size/2, size/2)
-      grad.addColorStop(0, 'rgba(255,255,255,1)')
-      grad.addColorStop(0.2, 'rgba(255,255,255,0.5)')
-      grad.addColorStop(0.7, 'rgba(255,255,255,0.06)')
-      grad.addColorStop(1, 'rgba(255,255,255,0)')
+      grad.addColorStop(0, 'rgba(255,246,226,1)')
+      grad.addColorStop(0.2, 'rgba(240,222,180,0.5)')
+      grad.addColorStop(0.7, 'rgba(240,222,180,0.06)')
+      grad.addColorStop(1, 'rgba(240,222,180,0)')
       ctx.fillStyle = grad
       ctx.fillRect(0, 0, size, size)
       return new THREE.CanvasTexture(c)
@@ -120,7 +120,7 @@ export default function ProcedureSphere() {
         const sprite = new THREE.Sprite(
           new THREE.SpriteMaterial({
             map: glowTexture,
-            color: 0xffffff,
+            color: 0xe9d8b4,
             transparent: true,
             opacity: 1,
           })
