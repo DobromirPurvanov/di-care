@@ -48,50 +48,45 @@ export default function WhyUs() {
         },
       })
 
+      const T = 0.18 // дължина на прехода в слайд-единици
+
       slidesRef.current.forEach((slide, i) => {
         if (!slide) return
 
-        // Position all slides stacked
+        // Стифиране на слайдовете един върху друг
         gsap.set(slide, {
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
+          autoAlpha: i === 0 ? 1 : 0,
+          y: i === 0 ? 0 : 24,
         })
 
-        if (i === 0) {
-          // First slide starts visible
-          gsap.set(slide, { opacity: 1 })
-        } else {
-          gsap.set(slide, { opacity: 0 })
-        }
-
-        // Each slide gets a segment of the timeline
-        const segmentStart = i / slides.length
-        const segmentEnd = (i + 1) / slides.length
-        const fadeOutStart = segmentStart + (segmentEnd - segmentStart) * 0.75
-
+        // Слайд i е активен в интервала [i, i+1] от timeline-а.
+        // Изчезването на предишния приключва ТОЧНО когато започва
+        // появата на следващия — никога два слайда едновременно.
         if (i > 0) {
-          // Fade in
           tl.fromTo(
             slide,
-            { opacity: 0 },
-            { opacity: 1, ease: 'none' },
-            segmentStart
+            { autoAlpha: 0, y: 24 },
+            { autoAlpha: 1, y: 0, duration: T, ease: 'none' },
+            i
           )
         }
 
         if (i < slides.length - 1) {
-          // Fade out
-          tl.fromTo(
+          tl.to(
             slide,
-            { opacity: 1 },
-            { opacity: 0, ease: 'none' },
-            fadeOutStart
+            { autoAlpha: 0, y: -24, duration: T, ease: 'none' },
+            i + 1 - T
           )
         }
       })
+
+      // Последният слайд остава видим до края на pin-а
+      tl.set({}, {}, slides.length)
     }, sectionRef)
 
     return () => ctx.revert()

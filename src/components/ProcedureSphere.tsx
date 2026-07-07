@@ -103,7 +103,7 @@ export default function ProcedureSphere() {
     const glowTexture = createGlowTexture()
 
     // Random stars
-    function addStars(count = 350) {
+    function addStars(count = 220) {
       const stars = new THREE.Group()
       for (let i = 0; i < count; i++) {
         const u = Math.random()
@@ -116,13 +116,13 @@ export default function ProcedureSphere() {
         const y = r * Math.cos(phi)
         const z = r * Math.sin(phi) * Math.sin(theta)
 
-        const size = Math.random() * 6 + 5
+        const size = Math.random() * 4 + 3
         const sprite = new THREE.Sprite(
           new THREE.SpriteMaterial({
             map: glowTexture,
             color: 0xe9d8b4,
             transparent: true,
-            opacity: 1,
+            opacity: 0.9,
           })
         )
         sprite.position.set(x, y, z)
@@ -173,14 +173,19 @@ export default function ProcedureSphere() {
     labelData.forEach(l => addLabel(l.title, l.lat, l.lon))
 
     // Animation
+    const clock = new THREE.Clock()
     let animId: number
     function animate() {
       animId = requestAnimationFrame(animate)
       controls.update()
 
+      // Времево-базирана конвергенция — еднаква скорост при всякакъв fps
+      const dt = Math.min(clock.getDelta(), 0.25)
+      const k = 1 - Math.pow(0.046, dt)
+
       // Update label visibility based on camera angle
       labels.forEach(label => {
-        label.obj.position.lerp(label.target, 0.05)
+        label.obj.position.lerp(label.target, k)
         label.obj.quaternion.copy(camera.quaternion)
 
         const pos = label.obj.getWorldPosition(new THREE.Vector3())
@@ -209,16 +214,16 @@ export default function ProcedureSphere() {
         let progress = (dist - minDist) / (maxDist - minDist)
         progress = Math.min(Math.max(progress, 0), 1)
 
+        // Цялата предна полусфера е четима; към хоризонта етикетите
+        // избледняват и се скриват — без полупрозрачни призраци отзад
         let opacity = 1
-        if (progress <= 0.5) {
+        if (progress <= 0.7) {
           opacity = 1
-        } else if (progress <= 0.99) {
-          opacity = 1 - (progress - 0.5) / 0.4
         } else {
-          opacity = 0
+          opacity = 1 - (progress - 0.7) / 0.3
         }
 
-        if (opacity <= 0) {
+        if (opacity <= 0.02) {
           label.element.style.display = 'none'
           label.element.style.pointerEvents = 'none'
         } else {
