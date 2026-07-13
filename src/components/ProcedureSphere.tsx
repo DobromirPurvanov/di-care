@@ -4,40 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import { ArrowRight, X } from 'lucide-react'
 import { scrollToTarget } from '../lib/scroll'
-
-interface LabelData {
-  title: string
-  lat: number
-  lon: number
-  description: string
-}
-
-const labelData: LabelData[] = [
-  { title: 'Лазерно подмладяване', lat: 0, lon: 270, description: 'Fotona 4D лифтинг, лазерен пилинг и ресърфейсинг за видимо по-млада кожа без възстановителен период.' },
-  { title: 'Дермални филъри', lat: 45, lon: 200, description: 'Прецизно възстановяване на обем и контур с хиалуронови филъри от световни марки.' },
-  { title: 'Ботокс', lat: -30, lon: 310, description: 'Изглаждане на мимически бръчки с естествен, недокоснат резултат.' },
-  { title: 'IV терапии', lat: 60, lon: 150, description: 'Венозни витаминни инфузии за енергия, имунитет и клетъчно възстановяване.' },
-  { title: 'Лазерна епилация', lat: -50, lon: 80, description: 'Трайно премахване на окосмяване с медицински лазер за всеки тип кожа.' },
-  { title: 'Озонотерапия', lat: 15, lon: 240, description: 'Системна детоксикация и подмладяване чрез медицински озон (Medozon).' },
-  { title: 'Стоматология', lat: -60, lon: 180, description: 'Естетична стоматология и холивудска усмивка от специалисти.' },
-  { title: 'Интимна грижа', lat: 40, lon: 350, description: 'Деликатно лазерно лечение и подмладяване на интимната зона.' },
-  { title: '4D Лифтинг', lat: -15, lon: 40, description: 'Четириизмерен неинвазивен лифтинг с Fotona — стягане отвътре и отвън.' },
-  { title: 'Мезотерапия', lat: 70, lon: 280, description: 'Микроинжектиране на активни коктейли за хидратация и сияйна кожа.' },
-  { title: 'Кожно затягане', lat: -40, lon: 130, description: 'Skin Tightening — лазерно стягане на отпусната кожа на лице и тяло.' },
-  { title: 'Маска за лице', lat: 25, lon: 100, description: 'Професионални терапии за лице, съобразени с вашия тип кожа.' },
-  { title: 'Регенерация', lat: 55, lon: 320, description: 'Регенеративни протоколи, стимулиращи естественото възстановяване.' },
-  { title: 'Хидратация', lat: -70, lon: 250, description: 'Дълбока хидратация с хиалурон и биоревитализация.' },
-  { title: 'Body контуринг', lat: 10, lon: 60, description: 'Лазерна липолиза и оформяне на силует без операция.' },
-  { title: 'Фотона пилинг', lat: -25, lon: 170, description: 'Контролиран лазерен пилинг за обновена, равномерна кожа.' },
-  { title: 'Подмладяване', lat: 50, lon: 30, description: 'Комплексни анти-ейдж програми, персонализирани за вас.' },
-  { title: 'Детоксикация', lat: -55, lon: 300, description: 'Пълна детоксикация на организма с озон и IV терапии.' },
-  { title: 'Лицев хирург', lat: 35, lon: 220, description: 'Консултации и естетични корекции от лицево-челюстен хирург.' },
-  { title: 'Диагностика', lat: -10, lon: 120, description: 'FRAS 5 тест за оксидативен стрес и персонализирани терапии.' },
-  { title: 'Корекция белези', lat: 65, lon: 260, description: 'Лазерно заличаване на белези, стрии и пигментации.' },
-  { title: 'NightLase', lat: -45, lon: 50, description: 'Неинвазивно лазерно лечение на хъркане за спокоен сън.' },
-  { title: 'Микронидлинг', lat: 20, lon: 340, description: 'Колаген-стимулираща терапия за текстура и еластичност.' },
-  { title: 'Анти-ейдж', lat: -65, lon: 160, description: 'Дългосрочна стратегия за запазване на младостта на кожата.' },
-]
+import { procedures as labelData, type Procedure } from '../data/procedures'
 
 export default function ProcedureSphere() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -50,6 +17,7 @@ export default function ProcedureSphere() {
     if (!container) return
 
     const isMobile = window.matchMedia('(max-width: 768px)').matches
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const w = container.clientWidth
     const h = container.clientHeight
     const sphereRadius = isMobile ? 220 : 320
@@ -75,7 +43,7 @@ export default function ProcedureSphere() {
     const controls = new OrbitControls(camera, cssRenderer.domElement)
     controls.enableDamping = true
     controls.dampingFactor = 0.05
-    controls.autoRotate = true
+    controls.autoRotate = !prefersReduced
     controls.autoRotateSpeed = isMobile ? 0.15 : 0.25
     controls.enablePan = false
     controls.minPolarAngle = Math.PI * 0.2
@@ -137,10 +105,10 @@ export default function ProcedureSphere() {
     function selectLabel(index: number | null) {
       labels.forEach((l, i) => l.element.classList.toggle('label-active', i === index))
       setActiveIdx(index)
-      controls.autoRotate = index === null
+      controls.autoRotate = index === null && !prefersReduced
     }
 
-    function addLabel(data: LabelData, index: number) {
+    function addLabel(data: Procedure, index: number) {
       const el = document.createElement('div')
       el.className = 'label-tag'
       el.textContent = data.title
@@ -165,7 +133,7 @@ export default function ProcedureSphere() {
         }
       })
       el.addEventListener('mouseenter', () => { controls.autoRotate = false })
-      el.addEventListener('mouseleave', () => { if (activeIdxRef.current === null) controls.autoRotate = true })
+      el.addEventListener('mouseleave', () => { if (activeIdxRef.current === null && !prefersReduced) controls.autoRotate = true })
 
       const obj = new CSS3DObject(el)
       const r = sphereRadius + (Math.random() - 0.5) * 40

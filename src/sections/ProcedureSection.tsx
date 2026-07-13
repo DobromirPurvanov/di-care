@@ -1,11 +1,15 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Orbit, LayoutGrid } from 'lucide-react'
+import ProcedureGrid from '../components/ProcedureGrid'
 
 gsap.registerPlugin(ScrollTrigger)
 
 // Code-splitting на тежката Three.js сфера
 const ProcedureSphere = lazy(() => import('../components/ProcedureSphere'))
+
+type View = 'sphere' | 'list'
 
 function SphereFallback() {
   return (
@@ -30,6 +34,12 @@ export default function ProcedureSection() {
   const dividerRef = useRef<HTMLDivElement>(null)
   const sphereWrapRef = useRef<HTMLDivElement>(null)
   const [isTouch, setIsTouch] = useState(false)
+  // По подразбиране списъчният изглед при reduced-motion — сферата се самозавърта.
+  const [view, setView] = useState<View>(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'list'
+      : 'sphere'
+  )
 
   useEffect(() => {
     setIsTouch(window.matchMedia('(pointer: coarse)').matches)
@@ -55,6 +65,13 @@ export default function ProcedureSection() {
     return () => ctx.revert()
   }, [])
 
+  const hint =
+    view === 'list'
+      ? 'Разгледайте всички процедури, групирани по категория'
+      : isTouch
+        ? 'Докоснете етикет за детайли'
+        : 'Завъртете сферата, за да разгледате всички процедури'
+
   return (
     <section
       id="procedures"
@@ -65,7 +82,7 @@ export default function ProcedureSection() {
       <div className="max-w-6xl mx-auto">
         <div
           ref={headerRef}
-          className="flex flex-col items-center opacity-0 mb-12"
+          className="flex flex-col items-center opacity-0 mb-10"
           style={{ transform: 'translateY(30px)' }}
         >
           {/* Златна емблема */}
@@ -110,10 +127,30 @@ export default function ProcedureSection() {
             className="text-center text-[11px] tracking-[0.22em] uppercase"
             style={{ color: 'rgba(242,237,226,0.7)', textShadow: '0 1px 12px rgba(0,0,0,0.5)' }}
           >
-            {isTouch
-              ? 'Докоснете етикет за детайли'
-              : 'Завъртете сферата, за да разгледате всички процедури'}
+            {hint}
           </p>
+
+          {/* Превключвател на изгледа: Сфера / Списък */}
+          <div className="proc-toggle mt-7" role="group" aria-label="Изглед на процедурите">
+            <button
+              type="button"
+              onClick={() => setView('sphere')}
+              aria-pressed={view === 'sphere'}
+              className={`proc-toggle-btn${view === 'sphere' ? ' is-active' : ''}`}
+            >
+              <Orbit size={14} aria-hidden="true" />
+              Сфера
+            </button>
+            <button
+              type="button"
+              onClick={() => setView('list')}
+              aria-pressed={view === 'list'}
+              className={`proc-toggle-btn${view === 'list' ? ' is-active' : ''}`}
+            >
+              <LayoutGrid size={14} aria-hidden="true" />
+              Списък
+            </button>
+          </div>
         </div>
 
         <div
@@ -121,9 +158,13 @@ export default function ProcedureSection() {
           className="opacity-0"
           style={{ transform: 'translateY(40px)' }}
         >
-          <Suspense fallback={<SphereFallback />}>
-            <ProcedureSphere />
-          </Suspense>
+          {view === 'sphere' ? (
+            <Suspense fallback={<SphereFallback />}>
+              <ProcedureSphere />
+            </Suspense>
+          ) : (
+            <ProcedureGrid />
+          )}
         </div>
       </div>
     </section>
