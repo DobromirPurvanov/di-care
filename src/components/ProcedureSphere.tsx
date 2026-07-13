@@ -300,7 +300,7 @@ export default function ProcedureSphere() {
                 <X size={15} aria-hidden="true" />
               </button>
             </div>
-            <p className="mt-3 text-[13px] font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.65)' }}>
+            <p className="mt-3 text-[14px] leading-relaxed" style={{ color: 'rgba(242,237,226,0.82)' }}>
               {active.description}
             </p>
             <div className="mt-4 flex items-center gap-5">

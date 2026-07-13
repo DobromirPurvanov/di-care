@@ -95,7 +95,7 @@ export default function Services() {
                   <h3 className="font-light text-lg tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
                     {cat.label}
                   </h3>
-                  <p className="text-sm mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.5)' }}>
+                  <p className="text-sm mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.68)' }}>
                     {tagline}
                   </p>
                   <div
