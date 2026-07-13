@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -6,19 +7,35 @@ import Header from './components/Header'
 import LoadingScreen from './components/LoadingScreen'
 import CustomCursor from './components/CustomCursor'
 import NoiseOverlay from './components/NoiseOverlay'
-import Hero from './sections/Hero'
-import ProcedureSection from './sections/ProcedureSection'
-import Services from './sections/Services'
-import WhyUs from './sections/WhyUs'
-import Equipment from './sections/Equipment'
-import Contact from './sections/Contact'
 import Footer from './sections/Footer'
-import { setLenis } from './lib/scroll'
+import Home from './pages/Home'
+import ServicePage from './pages/ServicePage'
+import { getLenis, setLenis } from './lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
 // Code-splitting за тежкия WebGL фон
 const ShaderBackground = lazy(() => import('./components/ShaderBackground'))
+
+/** Връща скрола в началото при смяна на маршрут (освен ако не е поискан scrollTo). */
+function ScrollToTop() {
+  const { pathname, state } = useLocation()
+  useEffect(() => {
+    if ((state as { scrollTo?: string } | null)?.scrollTo) return
+    // Изчакваме новото съдържание да се монтира, после нулираме скрола —
+    // иначе Lenis клампва към старата (по-голяма) височина на страницата.
+    const id = requestAnimationFrame(() => {
+      const lenis = getLenis()
+      if (lenis) {
+        lenis.resize()
+        lenis.scrollTo(0, { immediate: true, force: true })
+      }
+      window.scrollTo(0, 0)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [pathname, state])
+  return null
+}
 
 export default function App() {
   // Lenis smooth scroll, синхронизиран с GSAP ScrollTrigger
@@ -51,14 +68,12 @@ export default function App() {
         <ShaderBackground />
       </Suspense>
       <Header />
-      <main className="relative z-10">
-        <Hero />
-        <ProcedureSection />
-        <Services />
-        <WhyUs />
-        <Equipment />
-        <Contact />
-      </main>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/uslugi/:slug" element={<ServicePage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
       <Footer />
       <NoiseOverlay />
       <CustomCursor />

@@ -2,15 +2,18 @@ import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
+import { Link } from 'react-router'
 import { ArrowRight, X } from 'lucide-react'
 import { scrollToTarget } from '../lib/scroll'
-import { procedures as labelData, type Procedure } from '../data/procedures'
+import { procedures as labelData, categoryById, type Procedure } from '../data/procedures'
 
 export default function ProcedureSphere() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIdx, setActiveIdx] = useState<number | null>(null)
   const activeIdxRef = useRef<number | null>(null)
-  activeIdxRef.current = activeIdx
+
+  // Синхронизираме ref-а извън render, за да го чете анимационният цикъл на Three.js.
+  useEffect(() => { activeIdxRef.current = activeIdx }, [activeIdx])
 
   useEffect(() => {
     const container = containerRef.current
@@ -300,14 +303,23 @@ export default function ProcedureSphere() {
             <p className="mt-3 text-[13px] font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.65)' }}>
               {active.description}
             </p>
-            <button
-              onClick={() => scrollToTarget('#contact')}
-              className="mt-4 inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
-              style={{ color: '#c8a05e' }}
-            >
-              Запази час
-              <ArrowRight size={13} aria-hidden="true" />
-            </button>
+            <div className="mt-4 flex items-center gap-5">
+              <Link
+                to={`/uslugi/${categoryById[active.category].slug}`}
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
+                style={{ color: '#c8a05e' }}
+              >
+                Научете повече
+                <ArrowRight size={13} aria-hidden="true" />
+              </Link>
+              <button
+                onClick={() => scrollToTarget('#contact')}
+                className="text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
+                style={{ color: 'rgba(242,237,226,0.6)' }}
+              >
+                Запази час
+              </button>
+            </div>
           </div>
         )}
       </div>

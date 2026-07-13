@@ -33,7 +33,9 @@ export default function ProcedureSection() {
   const headerRef = useRef<HTMLDivElement>(null)
   const dividerRef = useRef<HTMLDivElement>(null)
   const sphereWrapRef = useRef<HTMLDivElement>(null)
-  const [isTouch, setIsTouch] = useState(false)
+  const [isTouch] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+  )
   // По подразбиране списъчният изглед при reduced-motion — сферата се самозавърта.
   const [view, setView] = useState<View>(() =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -42,8 +44,6 @@ export default function ProcedureSection() {
   )
 
   useEffect(() => {
-    setIsTouch(window.matchMedia('(pointer: coarse)').matches)
-
     const ctx = gsap.context(() => {
       gsap.to(headerRef.current, {
         opacity: 1, y: 0, duration: 1, ease: 'power3.out',

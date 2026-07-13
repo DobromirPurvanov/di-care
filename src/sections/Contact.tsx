@@ -37,10 +37,9 @@ const SOCIALS = [
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null)
-  const [status, setStatus] = useState<{ open: boolean } | null>(null)
+  const [status, setStatus] = useState<{ open: boolean } | null>(() => getClinicStatus())
 
   useEffect(() => {
-    setStatus(getClinicStatus())
     const timer = setInterval(() => setStatus(getClinicStatus()), 60_000)
 
     const ctx = gsap.context(() => {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router'
 import { Menu, X, Phone } from 'lucide-react'
 import ScrollProgress from './ScrollProgress'
 import { scrollToTarget } from '../lib/scroll'
@@ -20,6 +21,9 @@ export default function Header() {
   const lastY = useRef(0)
   const menuRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef<number | null>(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const onHome = location.pathname === '/'
 
   // Smart header: крие се при скрол надолу, показва се при скрол нагоре
   useEffect(() => {
@@ -35,8 +39,9 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Active section highlighting чрез IntersectionObserver
+  // Active section highlighting чрез IntersectionObserver (само на началната страница)
   useEffect(() => {
+    if (!onHome) return
     const sections = navItems
       .map(i => document.querySelector<HTMLElement>(i.href))
       .filter((el): el is HTMLElement => !!el)
@@ -51,11 +56,13 @@ export default function Header() {
     )
     sections.forEach(s => observer.observe(s))
     return () => observer.disconnect()
-  }, [])
+  }, [onHome])
 
   const handleNav = (href: string) => {
     setMenuOpen(false)
-    scrollToTarget(href)
+    // От подстраница първо се връщаме към началото, после скролваме до котвата.
+    if (onHome) scrollToTarget(href)
+    else navigate('/', { state: { scrollTo: href } })
   }
 
   // Swipe-down за затваряне на мобилното меню

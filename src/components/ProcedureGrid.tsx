@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Link } from 'react-router'
 import { ArrowRight, X, Sparkles } from 'lucide-react'
 import { scrollToTarget } from '../lib/scroll'
-import { procedures, categories, type Procedure } from '../data/procedures'
+import { procedures, categories, categoryById, type Procedure } from '../data/procedures'
 
 /** Съдържанието на детайл-панела — споделя се между десктоп колоната и мобилната карта. */
 function DetailBody({ active, onClose }: { active: Procedure; onClose: () => void }) {
+  const category = categoryById[active.category]
   return (
     <div className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-4">
@@ -24,14 +26,23 @@ function DetailBody({ active, onClose }: { active: Procedure; onClose: () => voi
       <p className="mt-3 text-[13px] font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.65)' }}>
         {active.description}
       </p>
-      <button
-        onClick={() => scrollToTarget('#contact')}
-        className="mt-4 inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
-        style={{ color: '#c8a05e' }}
-      >
-        Запази час
-        <ArrowRight size={13} aria-hidden="true" />
-      </button>
+      <div className="mt-4 flex items-center gap-5">
+        <Link
+          to={`/uslugi/${category.slug}`}
+          className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
+          style={{ color: '#c8a05e' }}
+        >
+          Научете повече
+          <ArrowRight size={13} aria-hidden="true" />
+        </Link>
+        <button
+          onClick={() => scrollToTarget('#contact')}
+          className="text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
+          style={{ color: 'rgba(242,237,226,0.6)' }}
+        >
+          Запази час
+        </button>
+      </div>
     </div>
   )
 }

@@ -13,18 +13,26 @@ export type CategoryId =
 export interface Category {
   id: CategoryId
   label: string
+  /** URL на страницата за услугата (напр. /uslugi/ozonoterapia). */
+  slug: string
 }
 
 /** Реда на категориите определя подредбата в списъчния изглед. */
 export const categories: Category[] = [
-  { id: 'ozone', label: 'Озонотерапия' },
-  { id: 'iv', label: 'Инфузионна терапия' },
-  { id: 'laser', label: 'Лазер Fotona' },
-  { id: 'regen', label: 'Мезотерапия & Регенерация' },
-  { id: 'injectable', label: 'Инжекционни процедури' },
-  { id: 'gyneco', label: 'Естетична гинекология' },
-  { id: 'dental', label: 'Лазерна стоматология' },
+  { id: 'ozone', label: 'Озонотерапия', slug: 'ozonoterapia' },
+  { id: 'iv', label: 'Инфузионна терапия', slug: 'infuzionna-terapia' },
+  { id: 'laser', label: 'Лазер Fotona', slug: 'laser-fotona' },
+  { id: 'regen', label: 'Мезотерапия & Регенерация', slug: 'mezoterapia' },
+  { id: 'injectable', label: 'Инжекционни процедури', slug: 'injekcionni-proceduri' },
+  { id: 'gyneco', label: 'Естетична гинекология', slug: 'estetichna-ginekologia' },
+  { id: 'dental', label: 'Лазерна стоматология', slug: 'laserna-stomatologia' },
 ]
+
+/** Бърз достъп до категория по id. */
+export const categoryById: Record<CategoryId, Category> = categories.reduce(
+  (acc, c) => { acc[c.id] = c; return acc },
+  {} as Record<CategoryId, Category>
+)
 
 export interface Procedure {
   title: string
