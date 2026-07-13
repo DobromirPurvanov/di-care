@@ -21,12 +21,13 @@ export default function Services() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.to(titleRef.current, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
       })
+      // Stagger entry: opacity 0, y: 60 с 120ms между картите
       gsap.utils.toArray<HTMLElement>('.svc-card').forEach((el, i) => {
         gsap.to(el, {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.1,
+          opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: (i % 3) * 0.12,
           scrollTrigger: { trigger: el, start: 'top 88%' },
         })
       })
@@ -47,8 +48,8 @@ export default function Services() {
       <div className="max-w-6xl mx-auto">
         <h2
           ref={titleRef}
-          className="text-center font-extralight uppercase tracking-[0.12em] opacity-0 mb-16"
-          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', transform: 'translateY(30px)' }}
+          className="text-center font-extralight uppercase tracking-[0.15em] opacity-0 mb-16"
+          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', transform: 'translateY(40px)' }}
         >
           Нашите услуги
         </h2>
@@ -57,30 +58,56 @@ export default function Services() {
           {services.map((s, i) => (
             <div
               key={i}
-              className="svc-card group relative overflow-hidden cursor-pointer bg-black opacity-0"
-              style={{ minHeight: '280px', transform: 'translateY(40px)' }}
+              className="svc-card group relative overflow-hidden cursor-pointer opacity-0 border border-transparent transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-1"
+              style={{
+                minHeight: '280px',
+                background: 'var(--bg)',
+                transform: 'translateY(60px)',
+                transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                boxShadow: '0 0 0 rgba(0,0,0,0)',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 40px rgba(0,0,0,0.4)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 rgba(0,0,0,0)' }}
+              role="button"
+              tabIndex={0}
+              aria-label={`${s.title} — ${s.desc}`}
             >
               <div className="absolute inset-0">
                 <img
                   src={s.img}
-                  alt={s.title}
-                  className="w-full h-full object-cover opacity-30 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700"
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover opacity-30 group-hover:opacity-65 group-hover:scale-[1.08] transition-all duration-700"
                   loading="lazy"
                 />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0c1614 0%, rgba(12,22,20,0.75) 40%, transparent 100%)' }} />
+                <div
+                  className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-80"
+                  style={{ background: 'linear-gradient(to top, #0c1614 0%, rgba(12,22,20,0.6) 50%, transparent 100%)' }}
+                />
               </div>
 
-              <div className="relative z-10 h-full flex flex-col justify-end p-6" style={{ minHeight: '280px' }}>
+              {/* Златен номер */}
+              <span
+                aria-hidden="true"
+                className="font-mono-luxe absolute top-5 left-6 z-10 text-sm tracking-[0.1em] transition-opacity duration-[400ms] opacity-30 group-hover:opacity-80"
+                style={{ color: '#c8a05e' }}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              <div className="relative z-10 h-full flex flex-col justify-end p-6 aspect-[4/3] md:aspect-auto" style={{ minHeight: '280px' }}>
                 <h3 className="font-light text-base tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
                   {s.title}
                 </h3>
-                <p className="text-sm mt-2 font-light" style={{ color: 'rgba(242,237,226,0.4)' }}>
+                <p className="text-sm mt-2 font-light" style={{ color: 'rgba(242,237,226,0.45)' }}>
                   {s.desc}
                 </p>
-                <div className="flex items-center gap-2 mt-4 text-xs tracking-wider uppercase opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300"
-                  style={{ color: 'var(--accent-light)' }}>
+                <div
+                  className="flex items-center gap-2 mt-4 text-xs tracking-wider uppercase opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+                  style={{ color: 'var(--accent-light)' }}
+                >
                   <span>Научете повече</span>
-                  <ArrowRight size={14} />
+                  <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-[6px]" aria-hidden="true" />
                 </div>
               </div>
             </div>

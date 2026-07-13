@@ -1,21 +1,52 @@
-import { useEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import ProcedureSphere from '../components/ProcedureSphere'
 
 gsap.registerPlugin(ScrollTrigger)
+
+// Code-splitting на тежката Three.js сфера
+const ProcedureSphere = lazy(() => import('../components/ProcedureSphere'))
+
+function SphereFallback() {
+  return (
+    <div
+      className="w-full flex items-center justify-center"
+      style={{ height: 'min(80vh, 800px)' }}
+      aria-label="Зареждане на 3D сферата"
+      role="status"
+    >
+      <span
+        className="w-10 h-10 rounded-full animate-spin"
+        style={{ border: '2px solid rgba(200,160,94,0.15)', borderTopColor: '#c8a05e' }}
+        aria-hidden="true"
+      />
+    </div>
+  )
+}
 
 export default function ProcedureSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
+  const dividerRef = useRef<HTMLDivElement>(null)
   const sphereWrapRef = useRef<HTMLDivElement>(null)
+  const [isTouch, setIsTouch] = useState(false)
 
   useEffect(() => {
+    setIsTouch(window.matchMedia('(pointer: coarse)').matches)
+
     const ctx = gsap.context(() => {
       gsap.to(headerRef.current, {
         opacity: 1, y: 0, duration: 1, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
       })
+      // Разделителят се "разтваря" от центъра при влизане
+      gsap.fromTo(dividerRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 1, duration: 1.1, ease: 'power3.out', delay: 0.35,
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
+        }
+      )
       gsap.to(sphereWrapRef.current, {
         opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
         scrollTrigger: { trigger: sphereWrapRef.current, start: 'top 85%' },
@@ -49,29 +80,39 @@ export default function ProcedureSection() {
             draggable={false}
           />
 
-          <h2
-            className="text-gradient text-center font-extralight uppercase tracking-[0.14em]"
-            style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.4rem)', lineHeight: 1.2 }}
-          >
-            Изберете процедура
-          </h2>
+          {/* Заглавие с декоративни странични линии */}
+          <div className="flex items-center gap-5 sm:gap-8 w-full max-w-3xl">
+            <span aria-hidden="true" className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,160,94,0.4))' }} />
+            <h2
+              className="text-gradient text-center font-extralight uppercase tracking-[0.15em] whitespace-nowrap"
+              style={{ fontSize: 'clamp(1.4rem, 3.2vw, 2.4rem)', lineHeight: 1.2 }}
+            >
+              Изберете процедура
+            </h2>
+            <span aria-hidden="true" className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(200,160,94,0.4), transparent)' }} />
+          </div>
 
-          {/* Тънък златен разделител */}
+          {/* Анимиран златен разделител — разтваря се от центъра */}
           <div
-            className="my-5"
+            ref={dividerRef}
+            aria-hidden="true"
+            className="my-5 will-change-transform"
             style={{
               width: '72px',
               height: '1px',
-              background:
-                'linear-gradient(90deg, transparent, rgba(200,160,94,0.9), transparent)',
+              background: 'linear-gradient(90deg, transparent, rgba(200,160,94,0.9), transparent)',
+              transform: 'scaleX(0)',
+              transformOrigin: 'center',
             }}
           />
 
           <p
             className="text-center text-[11px] tracking-[0.22em] uppercase"
-            style={{ color: 'rgba(242,237,226,0.6)' }}
+            style={{ color: 'rgba(242,237,226,0.7)', textShadow: '0 1px 12px rgba(0,0,0,0.5)' }}
           >
-            Завъртете сферата, за да разгледате всички процедури
+            {isTouch
+              ? 'Докоснете етикет за детайли'
+              : 'Завъртете сферата, за да разгледате всички процедури'}
           </p>
         </div>
 
@@ -80,7 +121,9 @@ export default function ProcedureSection() {
           className="opacity-0"
           style={{ transform: 'translateY(40px)' }}
         >
-          <ProcedureSphere />
+          <Suspense fallback={<SphereFallback />}>
+            <ProcedureSphere />
+          </Suspense>
         </div>
       </div>
     </section>

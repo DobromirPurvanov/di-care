@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap');
-
 @layer base {
   :root {
     --bg: #0c1614;
@@ -16,26 +14,42 @@
     --accent-light: #ddbd82;
     --accent-glow: rgba(200,160,94,0.3);
     --border: rgba(242,237,226,0.08);
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
   }
 
   html {
-    scroll-behavior: auto;
-    background: var(--bg);
+    scroll-behavior: auto; /* Lenis поема плавния скрол */
   }
 
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
-    overflow-x: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 300;
+    line-height: 1.4;
     -webkit-font-smoothing: antialiased;
-    line-height: 1.6;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Custom cursor — само на прецизен pointer */
+  @media (pointer: fine) {
+    body.has-custom-cursor,
+    body.has-custom-cursor a,
+    body.has-custom-cursor button,
+    body.has-custom-cursor [role="button"] {
+      cursor: none;
+    }
+    body.has-custom-cursor input,
+    body.has-custom-cursor textarea,
+    body.has-custom-cursor select {
+      cursor: auto;
+    }
   }
 
   ::selection {
@@ -43,26 +57,46 @@
     color: #f2ede2;
   }
 
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: rgba(200,160,94,0.3); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(200,160,94,0.55); }
+
+  :focus-visible {
+    outline: 2px solid rgba(200,160,94,0.75);
+    outline-offset: 3px;
+  }
 }
 
 @layer components {
+  .font-serif-luxe { font-family: var(--font-serif); }
+  .font-mono-luxe { font-family: var(--font-mono); }
+
   .text-gradient {
     background: linear-gradient(135deg, #f2ede2 30%, #ddbd82 70%);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .glow-text {
     text-shadow: 0 0 60px rgba(200,160,94,0.4), 0 0 120px rgba(200,160,94,0.15);
   }
 
+  .glow-pulse {
+    animation: glowPulse 3.2s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { text-shadow: 0 0 50px rgba(200,160,94,0.35), 0 0 110px rgba(200,160,94,0.12); }
+    50% { text-shadow: 0 0 70px rgba(200,160,94,0.55), 0 0 140px rgba(200,160,94,0.22); }
+  }
+
+  /* ------- Етикети на 3D сферата ------- */
   .label-tag {
     display: inline-flex;
+    align-items: center;
+    gap: 8px;
     padding: 9px 16px;
     background: rgba(12,22,20,0.78);
     border: 1px solid rgba(200,160,94,0.3);
@@ -73,15 +107,140 @@
     text-transform: uppercase;
     color: rgba(242,237,226,0.92);
     cursor: pointer;
-    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     white-space: nowrap;
     user-select: none;
     box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+    touch-action: manipulation;
   }
 
-  .label-tag:hover {
-    border-color: rgba(200,160,94,0.85);
+  .label-tag::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    margin-left: -4px;
+  }
+
+  .label-tag:hover,
+  .label-tag:focus-visible {
+    border-color: #c8a05e;
     color: #f2ede2;
-    background: rgba(24,40,36,0.94);
+    background: rgba(10,18,16,0.94);
+    box-shadow: 0 0 20px rgba(200,160,94,0.25), 0 4px 18px rgba(0,0,0,0.4);
+  }
+
+  .label-tag.label-active {
+    border-left: 2px solid #c8a05e;
+    border-top-color: rgba(200,160,94,0.55);
+    border-right-color: rgba(200,160,94,0.55);
+    border-bottom-color: rgba(200,160,94,0.55);
+    background: rgba(200,160,94,0.08);
+    color: #f2ede2;
+    box-shadow: 0 0 20px rgba(200,160,94,0.2);
+  }
+
+  .label-tag.label-active::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @media (pointer: coarse) {
+    .label-tag {
+      min-height: 44px;
+      padding: 12px 18px;
+      font-size: 12px;
+    }
+  }
+
+  /* ------- Форма ------- */
+  .field-wrap { position: relative; }
+
+  .field-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(242,237,226,0.15);
+    color: #f2ede2;
+    font-size: 15px;
+    font-weight: 300;
+    padding: 22px 0 10px;
+    min-height: 48px;
+    transition: border-color 0.3s ease;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field-input::placeholder { color: transparent; }
+
+  .field-input:focus {
+    outline: none;
+    border-bottom-color: #c8a05e;
+  }
+
+  .field-input.field-error { border-bottom-color: #e07a6a; }
+
+  .field-label {
+    position: absolute;
+    left: 0;
+    top: 22px;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: rgba(242,237,226,0.4);
+    pointer-events: none;
+    transition: top 0.25s ease, font-size 0.25s ease, color 0.25s ease, letter-spacing 0.25s ease;
+  }
+
+  .field-input:focus ~ .field-label,
+  .field-input:not(:placeholder-shown) ~ .field-label,
+  .field-label.label-float {
+    top: 0;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(200,160,94,0.85);
+  }
+
+  .field-msg {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: #e07a6a;
+  }
+
+  select.field-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c8a05e' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    padding-right: 24px;
+  }
+
+  select.field-input option {
+    background: #101d1a;
+    color: #f2ede2;
+  }
+
+  /* Тъмна Google Maps чрез CSS филтър */
+  .map-dark {
+    filter: grayscale(1) invert(0.92) hue-rotate(180deg) brightness(0.88) contrast(0.92);
+  }
+}
+
+@layer utilities {
+  .will-change-transform { will-change: transform; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

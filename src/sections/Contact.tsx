@@ -1,28 +1,58 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MapPin, Phone, Mail, Clock, Instagram, Facebook } from 'lucide-react'
+import ContactForm from '../components/ContactForm'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const MAPS_EMBED =
+  'https://www.google.com/maps?q=' +
+  encodeURIComponent('ул. Любен Каравелов 71, Варна, България') +
+  '&output=embed&hl=bg&z=16'
+
+/** Работно време на клиниката (Европа/София): Пн–Пт 10–17, Сб 10–14, Нд затворено. */
+function getClinicStatus(): { open: boolean } {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Sofia',
+      weekday: 'short',
+      hour: 'numeric',
+      hour12: false,
+    }).formatToParts(new Date())
+    const weekday = parts.find(p => p.type === 'weekday')?.value ?? ''
+    const hour = Number(parts.find(p => p.type === 'hour')?.value ?? -1)
+    if (['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(weekday)) return { open: hour >= 10 && hour < 17 }
+    if (weekday === 'Sat') return { open: hour >= 10 && hour < 14 }
+    return { open: false }
+  } catch {
+    return { open: false }
+  }
+}
+
+const SOCIALS = [
+  { icon: Instagram, name: 'Instagram', href: 'https://www.instagram.com/drdiclinic/' },
+  { icon: Facebook, name: 'Facebook', href: 'http://www.facebook.com/DrDiClinic/' },
+]
+
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
+  const [status, setStatus] = useState<{ open: boolean } | null>(null)
 
   useEffect(() => {
+    setStatus(getClinicStatus())
+    const timer = setInterval(() => setStatus(getClinicStatus()), 60_000)
+
     const ctx = gsap.context(() => {
-      gsap.to(titleRef.current, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
-      })
-      gsap.utils.toArray<HTMLElement>('.ct-block').forEach((el, i) => {
+      gsap.utils.toArray<HTMLElement>('.ct-reveal').forEach((el, i) => {
         gsap.to(el, {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.08,
-          scrollTrigger: { trigger: el, start: 'top 90%' },
+          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: (i % 2) * 0.1,
+          scrollTrigger: { trigger: el, start: 'top 88%' },
         })
       })
     }, sectionRef)
-    return () => ctx.revert()
+
+    return () => { clearInterval(timer); ctx.revert() }
   }, [])
 
   return (
@@ -32,74 +62,125 @@ export default function Contact() {
       className="relative z-10"
       style={{ padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)' }}
     >
-      <div className="max-w-5xl mx-auto">
-        <h2
-          ref={titleRef}
-          className="text-center font-extralight uppercase tracking-[0.12em] opacity-0 mb-16"
-          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', transform: 'translateY(30px)' }}
-        >
-          Контакти
-        </h2>
+      <div className="max-w-6xl mx-auto">
+        {/* Двуколонен layout: форма | карта */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+          {/* Лява колона — заглавие + форма */}
+          <div className="ct-reveal opacity-0 order-1" style={{ transform: 'translateY(40px)' }}>
+            <div className="flex items-center gap-5 mb-3">
+              <h2
+                className="font-extralight uppercase tracking-[0.15em]"
+                style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)' }}
+              >
+                Свържете се с нас
+              </h2>
+              <span aria-hidden="true" className="hidden sm:block flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(200,160,94,0.5), transparent)' }} />
+            </div>
+            <p className="text-sm font-light mb-10" style={{ color: 'rgba(242,237,226,0.5)', lineHeight: 1.6 }}>
+              Оставете вашите данни и екипът ни ще се свърже с вас, за да уточним удобен час за консултация.
+            </p>
+            <ContactForm />
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: 'rgba(242,237,226,0.05)' }}>
+          {/* Дясна колона — Google Maps (на мобилно е под формата) */}
+          <div className="ct-reveal opacity-0 order-2" style={{ transform: 'translateY(40px)' }}>
+            <div
+              className="w-full h-full overflow-hidden"
+              style={{ border: '1px solid rgba(200,160,94,0.25)', minHeight: '300px' }}
+            >
+              {/* TODO: за златен custom pin е нужен Google Maps JS API с ключ */}
+              <iframe
+                title="Локация на Dr. Di Clinic — ул. Любен Каравелов 71, Варна"
+                src={MAPS_EMBED}
+                className="map-dark w-full"
+                style={{ border: 0, minHeight: '300px', height: '100%', display: 'block' }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Контактни блокове */}
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: 'rgba(242,237,226,0.06)' }}>
           {[
-            { icon: MapPin, label: 'Адрес', value: 'гр. Варна, ул. Любен Каравелов № 71, Партер' },
+            { icon: MapPin, label: 'Адрес', value: 'гр. Варна, ул. Любен Каравелов № 71, Партер', href: undefined as string | undefined },
             { icon: Phone, label: 'Телефон', value: '+359 882 708 081', href: 'tel:+359882708081' },
             { icon: Mail, label: 'Имейл', value: 'drdiclinic21@gmail.com', href: 'mailto:drdiclinic21@gmail.com' },
-            { icon: Clock, label: 'Работно време', value: 'Понеделник – Петък: 10:00 – 17:00' },
+            { icon: Clock, label: 'Работно време', value: '', href: undefined },
           ].map((item, i) => (
             <div
               key={i}
-              className="ct-block bg-black p-8 lg:p-10 opacity-0"
-              style={{ transform: 'translateY(25px)' }}
+              className="ct-reveal flex items-start gap-4 p-6 lg:p-7 opacity-0"
+              style={{ background: 'var(--bg)', transform: 'translateY(25px)' }}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <item.icon size={15} style={{ color: 'var(--accent-light)' }} />
-                <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.3)' }}>
+              <item.icon size={18} className="flex-none mt-[2px]" style={{ color: 'var(--accent-light)' }} aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: 'rgba(242,237,226,0.35)' }}>
                   {item.label}
-                </span>
+                </p>
+                {item.label === 'Работно време' ? (
+                  <div className="text-sm font-light" style={{ color: 'rgba(242,237,226,0.8)', lineHeight: 1.7 }}>
+                    <p>Пон – Пет: 10:00 – 17:00</p>
+                    <p>Събота: 10:00 – 14:00</p>
+                    <p>Неделя: Затворено</p>
+                    {status && (
+                      <p className="flex items-center gap-2 mt-2 text-xs" aria-live="polite">
+                        <span
+                          aria-hidden="true"
+                          className="w-2 h-2 rounded-full"
+                          style={{ background: status.open ? '#7dc98f' : '#e07a6a', boxShadow: `0 0 8px ${status.open ? 'rgba(125,201,143,0.6)' : 'rgba(224,122,106,0.6)'}` }}
+                        />
+                        <span style={{ color: status.open ? '#9fd8ac' : '#e79c90' }}>
+                          В момента: {status.open ? 'Отворено' : 'Затворено'}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                ) : item.href ? (
+                  <a
+                    href={item.href}
+                    className="text-sm font-light break-words transition-colors duration-300 hover:text-[#ddbd82]"
+                    style={{ color: 'rgba(242,237,226,0.8)' }}
+                  >
+                    {item.value}
+                  </a>
+                ) : (
+                  <p className="text-sm font-light" style={{ color: 'rgba(242,237,226,0.8)', lineHeight: 1.6 }}>{item.value}</p>
+                )}
               </div>
-              {item.href ? (
-                <a href={item.href} className="font-light hover:text-[#ddbd82] transition-colors duration-300"
-                  style={{ color: 'rgba(242,237,226,0.8)' }}>
-                  {item.value}
-                </a>
-              ) : (
-                <p className="font-light" style={{ color: 'rgba(242,237,226,0.8)' }}>{item.value}</p>
-              )}
             </div>
           ))}
         </div>
 
-        {/* Social + CTA */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.2)' }}>
-              Последвайте ни
-            </span>
-            {[
-              { icon: Instagram, href: 'https://www.instagram.com/drdiclinic/' },
-              { icon: Facebook, href: 'http://www.facebook.com/DrDiClinic/' },
-            ].map((s, i) => (
-              <a
-                key={i}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 flex items-center justify-center border transition-all duration-300 hover:border-[#c8a05e]/40 hover:bg-[#c8a05e]/10"
-                style={{ borderColor: 'rgba(242,237,226,0.08)' }}
+        {/* Социални мрежи */}
+        <div className="ct-reveal mt-10 flex items-center gap-4 opacity-0" style={{ transform: 'translateY(20px)' }}>
+          <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.3)' }}>
+            Последвайте ни
+          </span>
+          {SOCIALS.map(s => (
+            <a
+              key={s.name}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-300 hover:border-[#c8a05e]/50"
+              style={{ borderColor: 'rgba(242,237,226,0.1)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(200,160,94,0.1)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+              aria-label={`Последвайте ни в ${s.name}`}
+            >
+              <s.icon size={18} className="transition-colors duration-300 group-hover:!text-[#c8a05e]" style={{ color: 'rgba(242,237,226,0.55)' }} aria-hidden="true" />
+              <span
+                role="tooltip"
+                className="pointer-events-none absolute left-1/2 bottom-full mb-2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1.5 text-[10px] tracking-[0.08em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
+                style={{ background: 'rgba(12,22,20,0.92)', border: '1px solid rgba(200,160,94,0.3)', color: 'rgba(242,237,226,0.85)' }}
               >
-                <s.icon size={15} style={{ color: 'rgba(242,237,226,0.5)' }} />
-              </a>
-            ))}
-          </div>
-
-          <a
-            href="tel:+359882708081"
-            className="px-8 py-3 bg-[#c8a05e] text-[#0c1614] text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:bg-[#ddbd82] hover:text-[#0c1614]"
-          >
-            Запази час
-          </a>
+                {s.name}
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
