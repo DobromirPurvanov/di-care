@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useLocation } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { Check, Loader2, AlertCircle } from 'lucide-react'
 import { categories } from '../data/procedures'
 
@@ -294,9 +294,9 @@ export default function ContactForm() {
           </span>
           <span className="text-xs leading-relaxed" style={{ color: 'rgba(242,237,226,0.65)' }}>
             Съгласен/на съм с{' '}
-            <a href="#" className="underline underline-offset-2 transition-colors hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.85)' }} onClick={e => e.stopPropagation()}>
+            <Link to="/poveritelnost" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.85)' }} onClick={e => e.stopPropagation()}>
               политиката за лични данни
-            </a>{' '}*
+            </Link>{' '}*
           </span>
         </label>
         {touched.gdpr && errors.gdpr && <span id="cf-gdpr-err" className="field-msg" role="alert">{errors.gdpr}</span>}

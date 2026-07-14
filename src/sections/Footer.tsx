@@ -1,4 +1,5 @@
 import { ArrowUp, Instagram, Facebook } from 'lucide-react'
+import { Link } from 'react-router'
 import { scrollToPosition, scrollToTarget } from '../lib/scroll'
 
 const QUICK_LINKS = [
@@ -70,12 +71,12 @@ export default function Footer() {
             <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.3)' }}>
               Информация
             </span>
-            <a href="#" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.5)' }}>
+            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.5)' }}>
               Политика за лични данни
-            </a>
-            <a href="#" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.5)' }}>
+            </Link>
+            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.5)' }}>
               GDPR
-            </a>
+            </Link>
           </div>
 
           {/* Обратно към началото */}

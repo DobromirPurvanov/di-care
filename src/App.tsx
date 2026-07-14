@@ -6,9 +6,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Header from './components/Header'
 import LoadingScreen from './components/LoadingScreen'
 import NoiseOverlay from './components/NoiseOverlay'
+import CookieConsent from './components/CookieConsent'
 import Footer from './sections/Footer'
 import Home from './pages/Home'
 import ServicePage from './pages/ServicePage'
+import Privacy from './pages/Privacy'
 import { getLenis, setLenis } from './lib/scroll'
 import { initCal } from './lib/booking'
 
@@ -80,9 +82,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/uslugi/:slug" element={<ServicePage />} />
+        <Route path="/poveritelnost" element={<Privacy />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />
+      <CookieConsent />
       <NoiseOverlay />
     </div>
   )
