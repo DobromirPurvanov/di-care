@@ -15,7 +15,6 @@ const BRANDS = [
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
-  const bgRef = useRef<HTMLImageElement>(null)
   const line1Ref = useRef<HTMLDivElement>(null)
   const line2Ref = useRef<HTMLDivElement>(null)
   const charsWrapRef = useRef<HTMLDivElement>(null)
@@ -31,17 +30,12 @@ export default function Hero() {
       tl.to(line1Ref.current, { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, 0)
         .to(line2Ref.current, { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, 0.2)
 
-      // Character-by-character reveal на последния ред
-      const chars = charsWrapRef.current?.querySelectorAll<HTMLElement>('.hero-char')
-      if (chars && chars.length) {
-        tl.set(charsWrapRef.current, { opacity: 1 }, 0.45)
-        tl.to(chars, {
-          opacity: 1, y: 0, rotateX: 0,
-          duration: reduced ? 0.01 : 0.7,
-          ease: 'power3.out',
-          stagger: reduced ? 0 : 0.045,
-        }, 0.45)
-      }
+      // Разкриване на акцентния ред (единичен елемент — надежден gradient рендер)
+      tl.to(charsWrapRef.current, {
+        opacity: 1, y: 0,
+        duration: reduced ? 0.01 : 1,
+        ease: 'power3.out',
+      }, 0.5)
 
       tl.to(brandsRef.current, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.35')
       if (brandsRef.current) {
@@ -50,20 +44,6 @@ export default function Hero() {
         }, '<')
       }
       tl.to(scrollHintRef.current, { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.2')
-
-      // Parallax на фоновото изображение (0.3x скорост)
-      if (!reduced && bgRef.current) {
-        gsap.to(bgRef.current, {
-          yPercent: 22,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-          },
-        })
-      }
     }, sectionRef)
 
     return () => ctx.revert()
@@ -78,16 +58,8 @@ export default function Hero() {
       className="relative z-10 flex flex-col items-center justify-center text-center overflow-hidden"
       style={{ height: '100svh', minHeight: '600px' }}
     >
-      {/* Фоново изображение с parallax и двоен gradient за дълбочина */}
-      <div className="absolute inset-0 overflow-hidden">
-        <img
-          ref={bgRef}
-          src="./images/drdiclinic/hero3.jpg"
-          alt=""
-          aria-hidden="true"
-          className="w-full h-[120%] object-cover opacity-20 will-change-transform"
-          style={{ transform: 'translateY(-10%)' }}
-        />
+      {/* Двоен gradient за дълбочина над анимирания shader фон */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(12,22,20,0.35) 0%, #0c1614 70%)' }} />
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(200,160,94,0.06) 0%, transparent 55%)' }} />
       </div>
@@ -115,19 +87,9 @@ export default function Hero() {
         <div
           ref={charsWrapRef}
           className="font-serif-luxe uppercase tracking-[0.14em] leading-[1.12] text-gradient glow-text glow-pulse opacity-0"
-          style={{ fontSize: 'clamp(1.7rem, 5vw, 3.9rem)', fontWeight: 600, perspective: '600px' }}
-          aria-label={lastLine}
+          style={{ fontSize: 'clamp(1.7rem, 5vw, 3.9rem)', fontWeight: 600, transform: 'translateY(50px)' }}
         >
-          {lastLine.split('').map((ch, i) => (
-            <span
-              key={i}
-              aria-hidden="true"
-              className="hero-char inline-block opacity-0"
-              style={{ transform: 'translateY(28px) rotateX(-55deg)', whiteSpace: 'pre' }}
-            >
-              {ch}
-            </span>
-          ))}
+          {lastLine}
         </div>
 
         <div

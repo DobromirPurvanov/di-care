@@ -1,33 +1,41 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Zap, Sparkles, Droplets, Activity, type LucideIcon } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const equipment = [
+interface Device {
+  name: string
+  desc: string
+  features: string[]
+  Icon: LucideIcon
+}
+
+const equipment: Device[] = [
   {
     name: 'Fotona Dynamis',
     desc: 'Многофункционална Nd:YAG и Er:YAG лазерна система за подмладяване, пилинг и лечение.',
     features: ['4D Lifting', 'Лазерен пилинг', 'Ресърфейсинг'],
-    img: './images/drdiclinic/fotona-dynamis.jpg',
+    Icon: Zap,
   },
   {
     name: 'Fotona4D',
     desc: 'Комплексна система за 4D лифтинг и подмладяване на лице и тяло.',
     features: ['4D Лифтинг', 'Подмладяване', 'Стягане'],
-    img: './images/drdiclinic/fotona4.jpg',
+    Icon: Sparkles,
   },
   {
     name: 'Medozon',
     desc: 'Медицински апарат за озонотерапия и детоксикация.',
     features: ['Автохемотерапия', 'Системна озонотерапия', 'Детоксикация'],
-    img: './images/drdiclinic/medozon.png',
+    Icon: Droplets,
   },
   {
     name: 'Fras 5',
     desc: 'Диагностична система за измерване на оксидативен стрес.',
     features: ['Антиоксидантен капацитет', 'Персонализирани терапии'],
-    img: './images/drdiclinic/fras5.jpg',
+    Icon: Activity,
   },
 ]
 
@@ -100,14 +108,18 @@ export default function Equipment() {
             >
               <div
                 className="sm:w-2/5 overflow-hidden flex items-center justify-center p-4 sm:border-r"
-                style={{ minHeight: '200px', background: 'rgba(242,237,226,0.03)', borderColor: 'rgba(242,237,226,0.05)' }}
+                style={{
+                  minHeight: '200px',
+                  background: 'radial-gradient(120% 100% at 50% 0%, rgba(200,160,94,0.08), rgba(242,237,226,0.02))',
+                  borderColor: 'rgba(242,237,226,0.05)',
+                }}
               >
-                <img
-                  src={eq.img}
-                  alt={eq.name}
-                  className="max-w-full max-h-[180px] object-contain opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                  loading="lazy"
-                />
+                <span
+                  className="flex items-center justify-center w-20 h-20 rounded-full transition-transform duration-500 group-hover:scale-110"
+                  style={{ border: '1px solid rgba(200,160,94,0.3)', background: 'rgba(12,22,20,0.4)' }}
+                >
+                  <eq.Icon size={34} strokeWidth={1.4} aria-hidden="true" style={{ color: 'var(--accent-light)' }} />
+                </span>
               </div>
               <div className="sm:w-3/5 p-6 flex flex-col justify-center">
                 <h3 className="font-light text-sm tracking-[0.1em] uppercase group-hover:text-[#ddbd82] transition-colors">

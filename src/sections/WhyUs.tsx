@@ -43,7 +43,7 @@ export default function WhyUs() {
   const titlesRef = useRef<HTMLHeadingElement[]>([])
   const dotsRef = useRef<HTMLButtonElement[]>([])
   const counterRef = useRef<HTMLSpanElement>(null)
-  const photoRef = useRef<HTMLImageElement>(null)
+  const photoRef = useRef<HTMLDivElement>(null)
   const stRef = useRef<ScrollTrigger | null>(null)
   const activeRef = useRef(0)
 
@@ -227,14 +227,21 @@ export default function WhyUs() {
 
       {/* Снимка на клиниката */}
       <div className="max-w-4xl mx-auto mt-20 px-6">
-        <div className="relative overflow-hidden">
-          <img
+        <div className="relative overflow-hidden" style={{ minHeight: '360px', border: '1px solid rgba(200,160,94,0.15)' }}>
+          {/* Декоративен брандиран панел с лек parallax слой */}
+          <div
             ref={photoRef}
-            src="./images/drdiclinic/clinic-banner.jpg"
-            alt="Интериорът на Dr. Di Clinic"
-            className="w-full h-auto object-cover opacity-60 hover:opacity-85 transition-opacity duration-700 will-change-transform scale-[1.12]"
-            style={{ maxHeight: '480px' }}
-            loading="lazy"
+            aria-hidden="true"
+            className="absolute inset-0 will-change-transform"
+            style={{ background: 'radial-gradient(120% 120% at 50% 20%, rgba(200,160,94,0.10), transparent 60%), #0c1614', transform: 'scale(1.15)' }}
+          />
+          <img
+            src="/images/logo-gold.png"
+            alt=""
+            aria-hidden="true"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-auto opacity-[0.12] select-none pointer-events-none"
+            style={{ height: '140px', filter: 'drop-shadow(0 0 30px rgba(200,160,94,0.3))' }}
+            draggable={false}
           />
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, #0c1614 0%, transparent 60%)' }} />
 
