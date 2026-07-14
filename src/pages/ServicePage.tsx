@@ -15,7 +15,8 @@ export default function ServicePage() {
   const items = procedures.filter((p) => p.category === category.id)
   const extras = new Map((content.extras ?? []).map((e) => [e.match, e]))
 
-  const bookNow = () => navigate('/', { state: { scrollTo: '#contact' } })
+  // Пренасяме избраната услуга към контактната форма (prefill).
+  const bookNow = () => navigate('/', { state: { scrollTo: '#contact', procedure: category.label } })
 
   return (
     <main

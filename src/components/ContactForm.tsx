@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
-import { Check, Loader2 } from 'lucide-react'
+import { useLocation } from 'react-router'
+import { Check, Loader2, AlertCircle } from 'lucide-react'
+import { categories } from '../data/procedures'
 
 type Values = {
   name: string
@@ -8,21 +10,20 @@ type Values = {
   procedure: string
   message: string
   gdpr: boolean
+  company: string // honeypot — реален потребител го оставя празно
 }
 
 type Errors = Partial<Record<keyof Values, string>>
 
-const PROCEDURES = [
-  'Лазерно подмладяване',
-  'Процедури за тяло',
-  'Стоматология',
-  'Озонотерапия',
-  'Интимна грижа',
-  'Диагностика',
-  'Друго',
-]
+const OTHER = 'Друго / Не съм сигурен(а)'
+// Опциите се захранват от реалните услуги — винаги в синхрон с останалия сайт.
+const PROCEDURE_OPTIONS = [...categories.map((c) => c.label), OTHER]
 
-const initial: Values = { name: '', phone: '', email: '', procedure: '', message: '', gdpr: false }
+const MESSAGE_MAX = 600
+
+const initial: Values = {
+  name: '', phone: '', email: '', procedure: '', message: '', gdpr: false, company: '',
+}
 
 function validateField(field: keyof Values, values: Values): string | undefined {
   const v = values[field]
@@ -50,19 +51,22 @@ function validateField(field: keyof Values, values: Values): string | undefined 
 }
 
 export default function ContactForm() {
-  const [values, setValues] = useState<Values>(initial)
+  const { state } = useLocation()
+  // Prefill: ако идваме от страница на услуга с „Запази час", избираме услугата.
+  const prefill = (state as { procedure?: string } | null)?.procedure
+  const [values, setValues] = useState<Values>(() => ({
+    ...initial,
+    procedure: prefill && PROCEDURE_OPTIONS.includes(prefill) ? prefill : '',
+  }))
   const [errors, setErrors] = useState<Errors>({})
   const [touched, setTouched] = useState<Partial<Record<keyof Values, boolean>>>({})
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const formRef = useRef<HTMLFormElement>(null)
 
   const set = (field: keyof Values, value: string | boolean) => {
     setValues(prev => {
       const next = { ...prev, [field]: value }
-      // при вече докоснато поле — валидирай в реално време, за да изчезва грешката
-      if (touched[field]) {
-        setErrors(e => ({ ...e, [field]: validateField(field, next) }))
-      }
+      if (touched[field]) setErrors(e => ({ ...e, [field]: validateField(field, next) }))
       return next
     })
   }
@@ -75,37 +79,41 @@ export default function ContactForm() {
   const isValid = (field: keyof Values) =>
     touched[field] && !errors[field] && String(values[field]).trim() !== ''
 
-  const handleSubmit = () => {
+  async function submit() {
+    // Honeypot — ако е попълнен, това е бот: преструваме се на успех, без да пращаме.
+    if (values.company.trim()) { setStatus('success'); return }
+
     const all: Errors = {}
     ;(['name', 'phone', 'email', 'gdpr'] as (keyof Values)[]).forEach(f => {
       const err = validateField(f, values)
       if (err) all[f] = err
     })
-    setTouched({ name: true, phone: true, email: true, gdpr: true })
+    setTouched(t => ({ ...t, name: true, phone: true, email: true, gdpr: true }))
     setErrors(all)
 
     if (Object.keys(all).length > 0) {
-      // фокус върху първото невалидно поле
-      const first = formRef.current?.querySelector<HTMLElement>('.field-error, input[aria-invalid="true"]')
+      const first = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')
       first?.focus()
       return
     }
 
     setStatus('sending')
-    // TODO: заменете mock-а с реална API интеграция (Resend / собствен endpoint)
-    setTimeout(() => {
-      console.log('[ContactForm] Заявка за час:', values)
+    const payload = { ...values, phone: `+359 ${values.phone.trim()}`, company: undefined }
+    try {
+      // TODO: заменете mock-а с реален endpoint (Vercel Serverless / Resend / Formspree).
+      // const res = await fetch('/api/contact', { method: 'POST', body: JSON.stringify(payload) })
+      // if (!res.ok) throw new Error('bad status')
+      await new Promise(r => setTimeout(r, 900))
+      console.log('[ContactForm] Заявка за час:', payload)
       setStatus('success')
-    }, 900)
+    } catch {
+      setStatus('error')
+    }
   }
 
   if (status === 'success') {
     return (
-      <div
-        className="flex flex-col items-start gap-5 py-10"
-        role="status"
-        aria-live="polite"
-      >
+      <div className="flex flex-col items-start gap-5 py-10" role="status" aria-live="polite">
         <span
           className="w-14 h-14 rounded-full flex items-center justify-center"
           style={{
@@ -114,22 +122,16 @@ export default function ContactForm() {
             animation: 'successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
-          <Check size={26} style={{ color: '#c8a05e' }} />
+          <Check size={26} style={{ color: '#c8a05e' }} aria-hidden="true" />
         </span>
         <div>
-          <p className="text-lg font-light" style={{ color: '#f2ede2' }}>
-            Благодарим ви!
-          </p>
-          <p className="text-sm font-light mt-1" style={{ color: 'rgba(242,237,226,0.55)' }}>
-            Получихме вашата заявка и ще се свържем с вас скоро.
+          <p className="text-lg" style={{ color: '#f2ede2' }}>Благодарим ви!</p>
+          <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'rgba(242,237,226,0.7)' }}>
+            Получихме вашата заявка{values.procedure ? ` за „${values.procedure}"` : ''} и ще се
+            свържем с вас в рамките на работния ден за потвърждение на час.
           </p>
         </div>
-        <style>{`
-          @keyframes successPop {
-            0% { transform: scale(0.4); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-          }
-        `}</style>
+        <style>{`@keyframes successPop { 0% { transform: scale(0.4); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }`}</style>
       </div>
     )
   }
@@ -137,16 +139,30 @@ export default function ContactForm() {
   return (
     <form
       ref={formRef}
-      onSubmit={e => { e.preventDefault(); handleSubmit() }}
+      onSubmit={e => { e.preventDefault(); submit() }}
       noValidate
       className="flex flex-col gap-5"
     >
+      {/* Honeypot — скрит от хора и екранни четци */}
+      <input
+        type="text"
+        name="company"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={values.company}
+        onChange={e => set('company', e.target.value)}
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+      />
+
       {/* Име */}
       <div className="field-wrap">
         <input
           id="cf-name"
           type="text"
           autoComplete="name"
+          autoCapitalize="words"
+          enterKeyHint="next"
           placeholder=" "
           className={`field-input ${touched.name && errors.name ? 'field-error' : ''}`}
           value={values.name}
@@ -163,24 +179,33 @@ export default function ContactForm() {
 
       {/* Телефон */}
       <div className="field-wrap">
-        <span className="absolute left-0 top-[22px] text-sm select-none" aria-hidden="true" style={{ color: 'rgba(242,237,226,0.6)' }}>🇧🇬</span>
+        <span
+          className="absolute left-0 top-[22px] text-[15px] select-none pointer-events-none"
+          aria-hidden="true"
+          style={{ color: 'rgba(242,237,226,0.7)' }}
+        >
+          +359
+        </span>
         <input
           id="cf-phone"
           type="tel"
           inputMode="tel"
-          autoComplete="tel"
+          autoComplete="tel-national"
+          enterKeyHint="next"
           placeholder=" "
-          className={`field-input pl-8 ${touched.phone && errors.phone ? 'field-error' : ''}`}
+          className={`field-input pl-12 ${touched.phone && errors.phone ? 'field-error' : ''}`}
           value={values.phone}
           onChange={e => set('phone', e.target.value)}
           onBlur={() => blur('phone')}
           aria-invalid={!!(touched.phone && errors.phone)}
-          aria-describedby={errors.phone ? 'cf-phone-err' : undefined}
+          aria-describedby={`${errors.phone ? 'cf-phone-err' : 'cf-phone-help'}`}
           required
         />
-        <label htmlFor="cf-phone" className="field-label pl-8">Телефон *</label>
+        <label htmlFor="cf-phone" className="field-label pl-12">Телефон *</label>
         {isValid('phone') && <Check size={14} className="absolute right-0 top-6" style={{ color: '#8fb996' }} aria-hidden="true" />}
-        {touched.phone && errors.phone && <span id="cf-phone-err" className="field-msg" role="alert">{errors.phone}</span>}
+        {touched.phone && errors.phone
+          ? <span id="cf-phone-err" className="field-msg" role="alert">{errors.phone}</span>
+          : <span id="cf-phone-help" className="field-help">Ще ви се обадим за потвърждение на часа.</span>}
       </div>
 
       {/* Имейл */}
@@ -190,6 +215,7 @@ export default function ContactForm() {
           type="email"
           inputMode="email"
           autoComplete="email"
+          enterKeyHint="next"
           placeholder=" "
           className={`field-input ${touched.email && errors.email ? 'field-error' : ''}`}
           value={values.email}
@@ -203,19 +229,19 @@ export default function ContactForm() {
         {touched.email && errors.email && <span id="cf-email-err" className="field-msg" role="alert">{errors.email}</span>}
       </div>
 
-      {/* Процедура */}
+      {/* Услуга */}
       <div className="field-wrap">
         <select
           id="cf-procedure"
           className="field-input"
           value={values.procedure}
-          onChange={e => { set('procedure', e.target.value); setTouched(t => ({ ...t, procedure: true })) }}
+          onChange={e => set('procedure', e.target.value)}
         >
           <option value="" disabled hidden></option>
-          {PROCEDURES.map(p => <option key={p} value={p}>{p}</option>)}
+          {PROCEDURE_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
         <label htmlFor="cf-procedure" className={`field-label ${values.procedure ? 'label-float' : ''}`}>
-          Процедура
+          Услуга, която ви интересува
         </label>
       </div>
 
@@ -224,24 +250,34 @@ export default function ContactForm() {
         <textarea
           id="cf-message"
           rows={4}
+          maxLength={MESSAGE_MAX}
           placeholder=" "
           className="field-input resize-none"
           value={values.message}
           onChange={e => set('message', e.target.value)}
+          aria-describedby="cf-message-count"
         />
-        <label htmlFor="cf-message" className="field-label">
-          Разкажете ни повече за вашите нужди...
-        </label>
+        <label htmlFor="cf-message" className="field-label">Съобщение (по избор)</label>
+        {values.message.length > 0 && (
+          <span id="cf-message-count" className="field-help text-right block" aria-live="polite">
+            {values.message.length} / {MESSAGE_MAX}
+          </span>
+        )}
       </div>
 
       {/* GDPR */}
       <div className="field-wrap">
-        <label htmlFor="cf-gdpr" className="flex items-start gap-3 cursor-pointer select-none group">
+        <label htmlFor="cf-gdpr" className="flex items-start gap-3 cursor-pointer select-none">
           <input
             id="cf-gdpr"
             type="checkbox"
             checked={values.gdpr}
-            onChange={e => { set('gdpr', e.target.checked); setTouched(t => ({ ...t, gdpr: true })); setErrors(er => ({ ...er, gdpr: validateField('gdpr', { ...values, gdpr: e.target.checked }) })) }}
+            onChange={e => {
+              const checked = e.target.checked
+              setTouched(t => ({ ...t, gdpr: true }))
+              setValues(prev => ({ ...prev, gdpr: checked }))
+              setErrors(er => ({ ...er, gdpr: validateField('gdpr', { ...values, gdpr: checked }) }))
+            }}
             className="sr-only"
             aria-invalid={!!(touched.gdpr && errors.gdpr)}
             aria-describedby={errors.gdpr ? 'cf-gdpr-err' : undefined}
@@ -250,15 +286,15 @@ export default function ContactForm() {
             aria-hidden="true"
             className="mt-[2px] w-[18px] h-[18px] flex-none flex items-center justify-center transition-all duration-200"
             style={{
-              border: `1px solid ${values.gdpr ? '#c8a05e' : 'rgba(242,237,226,0.25)'}`,
+              border: `1px solid ${values.gdpr ? '#c8a05e' : touched.gdpr && errors.gdpr ? '#e07a6a' : 'rgba(242,237,226,0.25)'}`,
               background: values.gdpr ? 'rgba(200,160,94,0.15)' : 'transparent',
             }}
           >
             {values.gdpr && <Check size={12} style={{ color: '#c8a05e' }} />}
           </span>
-          <span className="text-xs font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.55)' }}>
-            Съгласен съм с{' '}
-            <a href="#" className="underline underline-offset-2 transition-colors hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.75)' }} onClick={e => e.stopPropagation()}>
+          <span className="text-xs leading-relaxed" style={{ color: 'rgba(242,237,226,0.65)' }}>
+            Съгласен/на съм с{' '}
+            <a href="#" className="underline underline-offset-2 transition-colors hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.85)' }} onClick={e => e.stopPropagation()}>
               политиката за лични данни
             </a>{' '}*
           </span>
@@ -266,22 +302,32 @@ export default function ContactForm() {
         {touched.gdpr && errors.gdpr && <span id="cf-gdpr-err" className="field-msg" role="alert">{errors.gdpr}</span>}
       </div>
 
+      {/* Грешка при изпращане */}
+      {status === 'error' && (
+        <div
+          role="alert"
+          className="flex items-start gap-2.5 p-3.5 text-[13px] leading-relaxed"
+          style={{ border: '1px solid rgba(224,122,106,0.4)', background: 'rgba(224,122,106,0.08)', color: '#e9a99d' }}
+        >
+          <AlertCircle size={16} aria-hidden="true" className="mt-[1px] flex-none" />
+          <span>
+            Възникна проблем при изпращането. Опитайте отново или ни се обадете на{' '}
+            <a href="tel:+359882708081" className="underline underline-offset-2">+359 88 270 8081</a>.
+          </span>
+        </div>
+      )}
+
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="mt-2 w-full sm:w-auto sm:self-start inline-flex items-center justify-center gap-3 px-10 py-4 text-[11px] tracking-[0.15em] uppercase font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
-        style={{ background: status === 'sending' ? '#c8a05e' : '#c8a05e', color: '#0c1614' }}
+        className="mt-2 w-full sm:w-auto sm:self-start inline-flex items-center justify-center gap-3 px-10 py-4 text-[11px] tracking-[0.15em] uppercase font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
+        style={{ background: '#c8a05e', color: '#0c1614' }}
         onMouseEnter={e => { if (status !== 'sending') (e.currentTarget as HTMLButtonElement).style.background = '#ddbd82' }}
         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#c8a05e' }}
       >
         {status === 'sending' ? (
-          <>
-            <Loader2 size={15} className="animate-spin" aria-hidden="true" />
-            Изпращане...
-          </>
-        ) : (
-          'Изпрати заявка'
-        )}
+          <><Loader2 size={15} className="animate-spin" aria-hidden="true" />Изпращане...</>
+        ) : status === 'error' ? 'Опитайте отново' : 'Изпрати заявка'}
       </button>
     </form>
   )

@@ -291,6 +291,14 @@
     color: #e07a6a;
   }
 
+  .field-help {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: rgba(242, 237, 226, 0.42);
+  }
+
   select.field-input {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c8a05e' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
