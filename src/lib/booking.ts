@@ -7,7 +7,7 @@
 // Ползваме официалния vanilla embed snippet (зареден динамично), вместо
 // npm пакета — така Cal не влиза в bundle-а и не утежнява build-а.
 
-export const CAL_LINK: string = import.meta.env.VITE_CAL_LINK ?? 'di-care/konsultacia'
+export const CAL_LINK: string = import.meta.env.VITE_CAL_LINK ?? 'dobromir-purvanov-ksto97/30min'
 
 /** Namespace за Cal embed инстанцията. */
 export const CAL_NAMESPACE = 'zapazi-chas'
