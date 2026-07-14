@@ -124,14 +124,14 @@ export default function ProcedureSphere() {
       el.setAttribute('role', 'button')
       el.setAttribute('aria-label', `Виж услугата за: ${data.title}`)
 
-      // Tap/click със защита срещу drag
-      let downX = 0, downY = 0
-      el.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY })
-      el.addEventListener('pointerup', (e) => {
+      // ВАЖНО: спираме натиска да стигне до OrbitControls (да не завърти сферата)
+      // И замразяваме въртенето веднага — така етикетът стои неподвижно по
+      // време на клика/тапа и навигацията е надеждна (и на десктоп, и на touch).
+      el.addEventListener('pointerdown', (e) => { e.stopPropagation(); controls.autoRotate = false })
+      el.addEventListener('pointerup', (e) => { e.stopPropagation() })
+      el.addEventListener('click', (e) => {
         e.stopPropagation()
-        if (Math.abs(e.clientX - downX) < 6 && Math.abs(e.clientY - downY) < 6) {
-          goToService(data)
-        }
+        goToService(data)
       })
       // Клавиатурна навигация
       el.addEventListener('keydown', (e) => {
