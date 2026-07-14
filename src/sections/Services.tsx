@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowRight } from 'lucide-react'
 import { categories, procedures } from '../data/procedures'
 import { serviceContent } from '../data/services'
+import BookingButton from '../components/BookingButton'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -52,9 +53,8 @@ export default function Services() {
             const count = procedures.filter((p) => p.category === cat.id).length
             const tagline = serviceContent[cat.id].tagline
             return (
-              <Link
+              <div
                 key={cat.id}
-                to={`/uslugi/${cat.slug}`}
                 className="svc-card group relative overflow-hidden opacity-0 border border-transparent transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-1"
                 style={{
                   minHeight: '260px',
@@ -65,7 +65,6 @@ export default function Services() {
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 40px rgba(0,0,0,0.4)' }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 rgba(0,0,0,0)' }}
-                aria-label={`${cat.label} — ${tagline}`}
               >
                 {/* Дискретно златно сияние при hover */}
                 <div
@@ -92,21 +91,37 @@ export default function Services() {
                 </span>
 
                 <div className="relative z-10 h-full flex flex-col justify-end p-6" style={{ minHeight: '260px' }}>
-                  <h3 className="font-light text-lg tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
-                    {cat.label}
-                  </h3>
-                  <p className="text-sm mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.68)' }}>
-                    {tagline}
-                  </p>
-                  <div
-                    className="flex items-center gap-2 mt-4 text-xs tracking-wider uppercase opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                    style={{ color: 'var(--accent-light)' }}
-                  >
-                    <span>Научете повече</span>
-                    <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-[6px]" aria-hidden="true" />
+                  <Link to={`/uslugi/${cat.slug}`} className="block" aria-label={`${cat.label} — ${tagline}`}>
+                    <h3 className="font-light text-lg tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
+                      {cat.label}
+                    </h3>
+                    <p className="text-sm mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.68)' }}>
+                      {tagline}
+                    </p>
+                  </Link>
+
+                  {/* Два CTA-та: детайли + директно запазване на час */}
+                  <div className="flex items-center gap-4 mt-5">
+                    <Link
+                      to={`/uslugi/${cat.slug}`}
+                      className="inline-flex items-center gap-2 text-xs tracking-wider uppercase transition-colors hover:text-[#ddbd82]"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
+                      Научете повече
+                      <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-[4px]" aria-hidden="true" />
+                    </Link>
+                    <span aria-hidden="true" className="w-px h-3.5" style={{ background: 'rgba(242,237,226,0.15)' }} />
+                    <BookingButton
+                      variant="link"
+                      service={cat.label}
+                      className="inline-flex text-xs tracking-wider uppercase font-medium"
+                      style={{ color: '#c8a05e' }}
+                    >
+                      Запази час
+                    </BookingButton>
                   </div>
                 </div>
-              </Link>
+              </div>
             )
           })}
         </div>

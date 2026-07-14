@@ -5,7 +5,6 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Header from './components/Header'
 import LoadingScreen from './components/LoadingScreen'
-import CustomCursor from './components/CustomCursor'
 import NoiseOverlay from './components/NoiseOverlay'
 import Footer from './sections/Footer'
 import Home from './pages/Home'
@@ -85,7 +84,6 @@ export default function App() {
       </Routes>
       <Footer />
       <NoiseOverlay />
-      <CustomCursor />
     </div>
   )
 }

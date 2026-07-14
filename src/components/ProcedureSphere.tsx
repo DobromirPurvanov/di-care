@@ -1,19 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
-import { Link } from 'react-router'
-import { ArrowRight, X } from 'lucide-react'
 import { procedures as labelData, categoryById, type Procedure } from '../data/procedures'
-import BookingButton from './BookingButton'
 
 export default function ProcedureSphere() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [activeIdx, setActiveIdx] = useState<number | null>(null)
+  // activeIdxRef остава винаги null — цикълът на анимацията го чете за culling.
   const activeIdxRef = useRef<number | null>(null)
-
-  // Синхронизираме ref-а извън render, за да го чете анимационният цикъл на Three.js.
-  useEffect(() => { activeIdxRef.current = activeIdx }, [activeIdx])
+  // Навигацията се ползва в императивните listener-и на етикетите.
+  const navigate = useNavigate()
+  const navigateRef = useRef(navigate)
+  useEffect(() => { navigateRef.current = navigate }, [navigate])
 
   useEffect(() => {
     const container = containerRef.current
@@ -52,6 +51,13 @@ export default function ProcedureSphere() {
     controls.minPolarAngle = Math.PI * 0.2
     controls.maxPolarAngle = Math.PI * 0.8
     controls.enableZoom = false
+
+    // Спираме въртенето докато мишката е над сферата — така всеки етикет
+    // стои неподвижно и е лесен за клик.
+    const pauseRotate = () => { if (!prefersReduced) controls.autoRotate = false }
+    const resumeRotate = () => { if (!prefersReduced) controls.autoRotate = true }
+    container.addEventListener('mouseenter', pauseRotate)
+    container.addEventListener('mouseleave', resumeRotate)
 
     // Glow текстура
     function createGlowTexture(): THREE.CanvasTexture {
@@ -105,19 +111,18 @@ export default function ProcedureSphere() {
     // Етикети
     const labels: { obj: CSS3DObject; element: HTMLDivElement; target: THREE.Vector3 }[] = []
 
-    function selectLabel(index: number | null) {
-      labels.forEach((l, i) => l.element.classList.toggle('label-active', i === index))
-      setActiveIdx(index)
-      controls.autoRotate = index === null && !prefersReduced
+    // Клик върху етикет → директно към страницата на съответната услуга.
+    function goToService(data: Procedure) {
+      navigateRef.current(`/uslugi/${categoryById[data.category].slug}`)
     }
 
-    function addLabel(data: Procedure, index: number) {
+    function addLabel(data: Procedure) {
       const el = document.createElement('div')
       el.className = 'label-tag'
       el.textContent = data.title
       el.tabIndex = 0
       el.setAttribute('role', 'button')
-      el.setAttribute('aria-label', `Процедура: ${data.title}`)
+      el.setAttribute('aria-label', `Виж услугата за: ${data.title}`)
 
       // Tap/click със защита срещу drag
       let downX = 0, downY = 0
@@ -125,18 +130,18 @@ export default function ProcedureSphere() {
       el.addEventListener('pointerup', (e) => {
         e.stopPropagation()
         if (Math.abs(e.clientX - downX) < 6 && Math.abs(e.clientY - downY) < 6) {
-          selectLabel(activeIdxRef.current === index ? null : index)
+          goToService(data)
         }
       })
       // Клавиатурна навигация
       el.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          selectLabel(activeIdxRef.current === index ? null : index)
+          goToService(data)
         }
       })
       el.addEventListener('mouseenter', () => { controls.autoRotate = false })
-      el.addEventListener('mouseleave', () => { if (activeIdxRef.current === null && !prefersReduced) controls.autoRotate = true })
+      el.addEventListener('mouseleave', () => { if (!prefersReduced) controls.autoRotate = true })
 
       const obj = new CSS3DObject(el)
       const r = sphereRadius + (Math.random() - 0.5) * 40
@@ -156,7 +161,7 @@ export default function ProcedureSphere() {
       labels.push({ obj, element: el, target })
     }
 
-    labelData.forEach((l, i) => addLabel(l, i))
+    labelData.forEach((l) => addLabel(l))
 
     // Анимация
     const clock = new THREE.Clock()
@@ -243,6 +248,8 @@ export default function ProcedureSphere() {
 
     return () => {
       window.removeEventListener('resize', onResize)
+      container.removeEventListener('mouseenter', pauseRotate)
+      container.removeEventListener('mouseleave', resumeRotate)
       cancelAnimationFrame(animId)
       controls.dispose()
       glRenderer.dispose()
@@ -251,8 +258,6 @@ export default function ProcedureSphere() {
       if (container.contains(cssRenderer.domElement)) container.removeChild(cssRenderer.domElement)
     }
   }, [])
-
-  const active = activeIdx !== null ? labelData[activeIdx] : null
 
   return (
     <div
@@ -264,65 +269,6 @@ export default function ProcedureSphere() {
         cursor: 'grab',
         touchAction: 'pan-y',
       }}
-    >
-      {/* Информационна карта за активната процедура */}
-      <div
-        className="absolute z-20 left-3 right-3 bottom-3 sm:left-6 sm:bottom-6 sm:right-auto sm:max-w-xs transition-all duration-[400ms]"
-        style={{
-          opacity: active ? 1 : 0,
-          transform: active ? 'translateY(0)' : 'translateY(14px)',
-          pointerEvents: active ? 'auto' : 'none',
-          background: 'rgba(12,22,20,0.88)',
-          border: '1px solid rgba(200,160,94,0.35)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
-        }}
-        role="dialog"
-        aria-live="polite"
-        aria-label={active ? `Детайли за ${active.title}` : undefined}
-      >
-        {active && (
-          <div className="p-5 sm:p-6">
-            <div className="flex items-start justify-between gap-4">
-              <h3 className="text-sm tracking-[0.12em] uppercase font-medium" style={{ color: '#ddbd82' }}>
-                {active.title}
-              </h3>
-              <button
-                onClick={() => {
-                  setActiveIdx(null)
-                  document.querySelectorAll('.label-tag.label-active').forEach(el => el.classList.remove('label-active'))
-                }}
-                className="p-2 -m-2 transition-colors hover:text-[#f2ede2]"
-                style={{ color: 'rgba(242,237,226,0.45)' }}
-                aria-label="Затвори детайлите"
-              >
-                <X size={15} aria-hidden="true" />
-              </button>
-            </div>
-            <p className="mt-3 text-[14px] leading-relaxed" style={{ color: 'rgba(242,237,226,0.82)' }}>
-              {active.description}
-            </p>
-            <div className="mt-4 flex items-center gap-5">
-              <Link
-                to={`/uslugi/${categoryById[active.category].slug}`}
-                className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
-                style={{ color: '#c8a05e' }}
-              >
-                Научете повече
-                <ArrowRight size={13} aria-hidden="true" />
-              </Link>
-              <BookingButton
-                variant="link"
-                service={categoryById[active.category].label}
-                className="inline-flex text-[11px] tracking-[0.15em] uppercase"
-              >
-                Запази час
-              </BookingButton>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    />
   )
 }
