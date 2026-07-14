@@ -90,6 +90,45 @@ export function initCal(handlers: { onOpen: () => void; onClose: () => void }): 
   w.Cal('init', CAL_NAMESPACE, { origin: 'https://cal.com' })
   const ns = w.Cal.ns![CAL_NAMESPACE]
   ns('ui', CAL_UI_CONFIG)
-  ns('on', { action: 'linkReady', callback: handlers.onOpen })
-  ns('on', { action: '__closeIframe', callback: handlers.onClose })
+
+  // Откриваме отваряне/затваряне на popup-а чрез самия модал, а не чрез Cal
+  // callbacks. Cal НЕ вдига надеждно събитие при затваряне през X / фон / Esc
+  // (само скрива <cal-modal-box> с visibility:hidden). Ако разчитаме на
+  // събитието, Lenis остава спрян и страницата „замръзва" — точно бъгът, при
+  // който „Запази час" крашва, ако не продължиш с резервацията.
+  watchCalModal(handlers)
+}
+
+/**
+ * Следи видимостта на Cal модала и вика onOpen/onClose при реална промяна.
+ * Понеся всички пътища на затваряне (бутон X, клик на фона, Esc, успешна
+ * резервация), защото гледа крайното състояние на DOM, а не Cal събития.
+ */
+function watchCalModal(handlers: { onOpen: () => void; onClose: () => void }): void {
+  if (typeof window === 'undefined' || typeof MutationObserver === 'undefined') return
+
+  let open = false
+  let modalObserver: MutationObserver | null = null
+
+  const evaluate = () => {
+    const modal = document.querySelector('cal-modal-box')
+    const isOpen = !!modal && getComputedStyle(modal).visibility !== 'hidden'
+    if (isOpen === open) return
+    open = isOpen
+    if (isOpen) handlers.onOpen()
+    else handlers.onClose()
+  }
+
+  // <cal-modal-box> се създава при първото отваряне като пряко дете на <body>
+  // и после се преизползва (само се сменя visibility). Наблюдаваме body за
+  // появата му, после закачаме наблюдател върху неговите атрибути.
+  const bodyObserver = new MutationObserver(() => {
+    const modal = document.querySelector('cal-modal-box')
+    if (modal && !modalObserver) {
+      modalObserver = new MutationObserver(evaluate)
+      modalObserver.observe(modal, { attributes: true, attributeFilter: ['style', 'state'] })
+    }
+    evaluate()
+  })
+  bodyObserver.observe(document.body, { childList: true })
 }
