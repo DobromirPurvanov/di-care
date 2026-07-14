@@ -236,7 +236,7 @@ export default function WhyUs() {
             style={{ background: 'radial-gradient(120% 120% at 50% 20%, rgba(200,160,94,0.10), transparent 60%), #0c1614', transform: 'scale(1.15)' }}
           />
           <img
-            src="/images/logo-gold.png"
+            src="/images/logo-di-care-gold.png"
             alt=""
             aria-hidden="true"
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-auto opacity-[0.12] select-none pointer-events-none"

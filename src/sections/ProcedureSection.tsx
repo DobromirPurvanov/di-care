@@ -87,7 +87,7 @@ export default function ProcedureSection() {
         >
           {/* Златна емблема */}
           <img
-            src="/images/logo-gold.png"
+            src="/images/logo-di-care-gold.png"
             alt="Dr. Di Clinic"
             className="w-auto mb-6 select-none"
             style={{

@@ -95,8 +95,13 @@ export default function Header() {
             role="button"
             aria-label="Към началото"
           >
-            <span className="text-[#f2ede2] font-light text-base tracking-[0.25em] uppercase">Dr. Di</span>
-            <span className="text-xs tracking-[0.15em] uppercase" style={{ color: 'var(--accent-light)' }}>Clinic</span>
+            <img
+              src="/images/logo-di-care-gold.png"
+              alt="Di Care"
+              className="w-auto select-none"
+              style={{ height: 'clamp(30px, 4vw, 38px)' }}
+              draggable={false}
+            />
           </a>
 
           <nav className="hidden lg:flex items-center" style={{ gap: 'clamp(1.25rem, 2.5vw, 2.25rem)' }} aria-label="Основна навигация">

@@ -33,7 +33,7 @@ export default function LoadingScreen() {
       }}
     >
       <img
-        src="/images/logo-gold.png"
+        src="/images/logo-di-care-gold.png"
         alt=""
         className="w-auto select-none"
         style={{ height: '56px', animation: 'loaderPulse 1.6s ease-in-out infinite' }}
