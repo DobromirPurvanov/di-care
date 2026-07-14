@@ -8,8 +8,8 @@
     --bg-elevated: #101d1a;
     --bg-card: #14231f;
     --text: #f2ede2;
-    --text-secondary: rgba(242,237,226,0.55);
-    --text-muted: rgba(242,237,226,0.32);
+    --text-secondary: rgba(242,237,226,0.74);
+    --text-muted: rgba(242,237,226,0.5);
     --accent: #c8a05e;
     --accent-light: #ddbd82;
     --accent-glow: rgba(200,160,94,0.3);
@@ -30,8 +30,8 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-weight: 300;
-    line-height: 1.4;
+    font-weight: 400;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;

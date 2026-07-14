@@ -112,7 +112,7 @@ export default function Header() {
                   key={item.href}
                   onClick={() => handleNav(item.href)}
                   className="relative text-xs tracking-[0.15em] uppercase cursor-pointer transition-colors duration-300 py-2"
-                  style={{ color: isActive ? '#f2ede2' : 'rgba(242,237,226,0.45)' }}
+                  style={{ color: isActive ? '#f2ede2' : 'rgba(242,237,226,0.72)' }}
                   aria-current={isActive ? 'true' : undefined}
                   role="button"
                 >
@@ -135,7 +135,7 @@ export default function Header() {
             <a
               href="tel:+359882708081"
               className="hidden md:flex items-center gap-2 px-5 py-2 text-[11px] tracking-[0.15em] uppercase border transition-all duration-300 hover:border-[#c8a05e]/60 hover:text-[#ddbd82]"
-              style={{ borderColor: 'rgba(242,237,226,0.2)', color: 'rgba(242,237,226,0.8)' }}
+              style={{ borderColor: 'rgba(242,237,226,0.45)', color: '#f2ede2' }}
               aria-label="Обади се на клиниката"
             >
               <Phone size={13} aria-hidden="true" />

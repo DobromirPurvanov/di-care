@@ -16,10 +16,10 @@ interface Props {
 
 // Вариантът задава само цветовете, за да работят hover състоянията чрез Tailwind.
 const VARIANT: Record<Variant, string> = {
-  primary: 'bg-[#c8a05e] text-[#0c1614] hover:bg-[#ddbd82]',
+  primary: 'bg-[#c8a05e] text-[#0c1614] font-medium hover:bg-[#ddbd82]',
   ghost:
-    'border border-[rgba(242,237,226,0.2)] text-[rgba(242,237,226,0.8)] hover:border-[#c8a05e] hover:text-[#ddbd82]',
-  link: 'text-[rgba(242,237,226,0.6)] hover:text-[#ddbd82]',
+    'border border-[rgba(242,237,226,0.45)] text-[#f2ede2] hover:border-[#c8a05e] hover:bg-[rgba(200,160,94,0.1)] hover:text-[#ddbd82]',
+  link: 'text-[rgba(242,237,226,0.85)] hover:text-[#ddbd82]',
 }
 
 /**
