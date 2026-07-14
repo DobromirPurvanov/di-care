@@ -4,8 +4,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import { Link } from 'react-router'
 import { ArrowRight, X } from 'lucide-react'
-import { scrollToTarget } from '../lib/scroll'
 import { procedures as labelData, categoryById, type Procedure } from '../data/procedures'
+import BookingButton from './BookingButton'
 
 export default function ProcedureSphere() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -312,13 +312,13 @@ export default function ProcedureSphere() {
                 Научете повече
                 <ArrowRight size={13} aria-hidden="true" />
               </Link>
-              <button
-                onClick={() => scrollToTarget('#contact')}
-                className="text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
-                style={{ color: 'rgba(242,237,226,0.6)' }}
+              <BookingButton
+                variant="link"
+                service={categoryById[active.category].label}
+                className="inline-flex text-[11px] tracking-[0.15em] uppercase"
               >
                 Запази час
-              </button>
+              </BookingButton>
             </div>
           </div>
         )}

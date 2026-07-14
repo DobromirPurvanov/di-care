@@ -1,11 +1,11 @@
-import { useParams, useNavigate, Link, Navigate } from 'react-router'
+import { useParams, Link, Navigate } from 'react-router'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { categories, procedures } from '../data/procedures'
 import { serviceContent, clinicPhilosophy } from '../data/services'
+import BookingButton from '../components/BookingButton'
 
 export default function ServicePage() {
   const { slug } = useParams()
-  const navigate = useNavigate()
   const category = categories.find((c) => c.slug === slug)
 
   // Непозната услуга → обратно към началото.
@@ -14,9 +14,6 @@ export default function ServicePage() {
   const content = serviceContent[category.id]
   const items = procedures.filter((p) => p.category === category.id)
   const extras = new Map((content.extras ?? []).map((e) => [e.match, e]))
-
-  // Пренасяме избраната услуга към контактната форма (prefill).
-  const bookNow = () => navigate('/', { state: { scrollTo: '#contact', procedure: category.label } })
 
   return (
     <main
@@ -134,14 +131,14 @@ export default function ServicePage() {
 
           {/* CTA */}
           <div className="mt-11 flex flex-col sm:flex-row sm:items-center gap-5">
-            <button
-              onClick={bookNow}
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-xs tracking-[0.16em] uppercase font-medium transition-all duration-300 hover:bg-[#ddbd82]"
-              style={{ background: '#c8a05e', color: '#0c1614' }}
+            <BookingButton
+              variant="primary"
+              service={category.label}
+              className="inline-flex px-7 py-3.5 text-xs tracking-[0.16em] uppercase font-medium"
             >
               Запази час
               <ArrowRight size={15} aria-hidden="true" />
-            </button>
+            </BookingButton>
             <a
               href="tel:+359882708081"
               className="inline-flex items-center gap-2 text-sm tracking-[0.05em] transition-colors hover:text-[#ddbd82]"

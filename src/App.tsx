@@ -11,6 +11,7 @@ import Footer from './sections/Footer'
 import Home from './pages/Home'
 import ServicePage from './pages/ServicePage'
 import { getLenis, setLenis } from './lib/scroll'
+import { initCal } from './lib/booking'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -59,6 +60,14 @@ export default function App() {
       lenis.destroy()
       setLenis(null)
     }
+  }, [])
+
+  // Cal.com — тема на календара + спиране на фоновия скрол докато popup-ът е отворен
+  useEffect(() => {
+    initCal({
+      onOpen: () => getLenis()?.stop(),
+      onClose: () => getLenis()?.start(),
+    })
   }, [])
 
   return (

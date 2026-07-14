@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router'
 import { ArrowRight, X, Sparkles } from 'lucide-react'
-import { scrollToTarget } from '../lib/scroll'
 import { procedures, categories, categoryById, type Procedure } from '../data/procedures'
+import BookingButton from './BookingButton'
 
 /** Съдържанието на детайл-панела — споделя се между десктоп колоната и мобилната карта. */
 function DetailBody({ active, onClose }: { active: Procedure; onClose: () => void }) {
@@ -35,13 +35,13 @@ function DetailBody({ active, onClose }: { active: Procedure; onClose: () => voi
           Научете повече
           <ArrowRight size={13} aria-hidden="true" />
         </Link>
-        <button
-          onClick={() => scrollToTarget('#contact')}
-          className="text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
-          style={{ color: 'rgba(242,237,226,0.6)' }}
+        <BookingButton
+          variant="link"
+          service={category.label}
+          className="inline-flex text-[11px] tracking-[0.15em] uppercase"
         >
           Запази час
-        </button>
+        </BookingButton>
       </div>
     </div>
   )

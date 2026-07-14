@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router'
 import { Menu, X, Phone } from 'lucide-react'
 import ScrollProgress from './ScrollProgress'
+import BookingButton from './BookingButton'
 import { scrollToTarget } from '../lib/scroll'
 
 const navItems = [
@@ -135,13 +136,13 @@ export default function Header() {
               <Phone size={13} aria-hidden="true" />
               Обади се
             </a>
-            <button
-              onClick={() => handleNav('#contact')}
-              className="hidden md:inline-flex px-5 py-2 text-[11px] tracking-[0.15em] uppercase font-medium transition-all duration-300 hover:bg-[#ddbd82]"
-              style={{ background: '#c8a05e', color: '#0c1614' }}
+            <BookingButton
+              variant="primary"
+              className="hidden md:inline-flex px-5 py-2 text-[11px] tracking-[0.15em] uppercase font-medium"
+              aria-label="Запази час онлайн"
             >
               Запази час
-            </button>
+            </BookingButton>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="lg:hidden w-11 h-11 flex items-center justify-center"

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Instagram, Facebook, CalendarClock, ArrowRight } from 'lucide-react'
 import ContactForm from '../components/ContactForm'
+import BookingButton from '../components/BookingButton'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -75,8 +76,35 @@ export default function Contact() {
               </h2>
               <span aria-hidden="true" className="hidden sm:block flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(200,160,94,0.5), transparent)' }} />
             </div>
-            <p className="text-sm font-light mb-10" style={{ color: 'rgba(242,237,226,0.5)', lineHeight: 1.6 }}>
-              Оставете вашите данни и екипът ни ще се свърже с вас, за да уточним удобен час за консултация.
+            <p className="text-sm mb-8" style={{ color: 'rgba(242,237,226,0.7)', lineHeight: 1.6 }}>
+              Изберете свободен час директно в календара ни — или ни оставете съобщение и ще се свържем с вас.
+            </p>
+
+            {/* Основен път: онлайн запазване на час в реално време */}
+            <div
+              className="mb-9 p-5 sm:p-6"
+              style={{ border: '1px solid rgba(200,160,94,0.28)', background: 'rgba(200,160,94,0.05)' }}
+            >
+              <div className="flex items-start gap-3">
+                <CalendarClock size={20} aria-hidden="true" style={{ color: 'var(--accent)', marginTop: '2px', flex: 'none' }} />
+                <div>
+                  <p className="text-sm" style={{ color: '#f2ede2' }}>Запазете час онлайн</p>
+                  <p className="text-[13px] mt-1 leading-relaxed" style={{ color: 'rgba(242,237,226,0.62)' }}>
+                    Вижте свободните часове в реално време и потвърдете за минута.
+                  </p>
+                </div>
+              </div>
+              <BookingButton
+                variant="primary"
+                className="inline-flex mt-4 px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium"
+              >
+                Запази час онлайн
+                <ArrowRight size={14} aria-hidden="true" />
+              </BookingButton>
+            </div>
+
+            <p className="text-[11px] tracking-[0.16em] uppercase mb-5" style={{ color: 'var(--text-muted)' }}>
+              Или ни оставете съобщение
             </p>
             <ContactForm />
           </div>

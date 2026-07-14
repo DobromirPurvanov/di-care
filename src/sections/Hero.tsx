@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 const BRANDS = [
   { name: 'Fotona\u00AE', tip: 'Водеща световна лазерна технология' },
   { name: '4D Lifting', tip: 'Неинвазивен лифтинг без възстановяване' },
-  { name: 'Ozonoterapiya', tip: 'Детоксикация и клетъчно подмладяване' },
+  { name: 'Ozone Therapy', tip: 'Детоксикация и клетъчно подмладяване' },
   { name: 'SmartXide', tip: 'CO2 лазер за прецизен ресърфейсинг' },
 ]
 

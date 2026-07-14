@@ -127,8 +127,8 @@ export default function ContactForm() {
         <div>
           <p className="text-lg" style={{ color: '#f2ede2' }}>Благодарим ви!</p>
           <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'rgba(242,237,226,0.7)' }}>
-            Получихме вашата заявка{values.procedure ? ` за „${values.procedure}"` : ''} и ще се
-            свържем с вас в рамките на работния ден за потвърждение на час.
+            Получихме вашето съобщение{values.procedure ? ` относно „${values.procedure}"` : ''} и ще се
+            свържем с вас в рамките на работния ден.
           </p>
         </div>
         <style>{`@keyframes successPop { 0% { transform: scale(0.4); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }`}</style>
