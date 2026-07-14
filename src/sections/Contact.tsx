@@ -77,12 +77,12 @@ export default function Contact() {
               <span aria-hidden="true" className="hidden sm:block flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(200,160,94,0.5), transparent)' }} />
             </div>
             <p className="text-sm mb-8" style={{ color: 'rgba(242,237,226,0.7)', lineHeight: 1.6 }}>
-              Изберете свободен час директно в календара ни — или ни оставете съобщение и ще се свържем с вас.
+              Изберете свободен час директно в календара ни или ни оставете съобщение и ще се свържем с вас.
             </p>
 
             {/* Основен път: онлайн запазване на час в реално време */}
             <div
-              className="mb-9 p-5 sm:p-6"
+              className="mb-9 p-5 sm:p-6 rounded-2xl"
               style={{ border: '1px solid rgba(200,160,94,0.28)', background: 'rgba(200,160,94,0.05)' }}
             >
               <div className="flex items-start gap-3">
@@ -112,7 +112,7 @@ export default function Contact() {
           {/* Дясна колона — Google Maps (на мобилно е под формата) */}
           <div className="ct-reveal opacity-0 order-2" style={{ transform: 'translateY(40px)' }}>
             <div
-              className="w-full h-full overflow-hidden"
+              className="w-full h-full overflow-hidden rounded-2xl"
               style={{ border: '1px solid rgba(200,160,94,0.25)', minHeight: '300px' }}
             >
               {/* TODO: за златен custom pin е нужен Google Maps JS API с ключ */}
@@ -130,7 +130,7 @@ export default function Contact() {
         </div>
 
         {/* Контактни блокове */}
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: 'rgba(242,237,226,0.06)' }}>
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden" style={{ background: 'rgba(242,237,226,0.06)' }}>
           {[
             { icon: MapPin, label: 'Адрес', value: 'гр. Варна, ул. Любен Каравелов № 71, Партер', href: undefined as string | undefined },
             { icon: Phone, label: 'Телефон', value: '+359 882 708 081', href: 'tel:+359882708081' },

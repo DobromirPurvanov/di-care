@@ -59,7 +59,7 @@ export default function CookieConsent() {
           border: '1px solid rgba(200,160,94,0.28)',
           borderLeft: '2px solid #c8a05e',
           boxShadow: '0 24px 70px rgba(0,0,0,0.55)',
-          borderRadius: '3px',
+          borderRadius: '18px',
           transform: shown ? 'translateY(0)' : 'translateY(24px)',
           opacity: shown ? 1 : 0,
           transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease',
@@ -85,7 +85,7 @@ export default function CookieConsent() {
           <button
             type="button"
             onClick={() => choose('essential')}
-            className="whitespace-nowrap px-4 py-2.5 text-[11px] tracking-[0.12em] uppercase transition-all duration-300 border"
+            className="whitespace-nowrap px-4 py-2.5 rounded-full text-[11px] tracking-[0.12em] uppercase transition-all duration-300 border"
             style={{ borderColor: 'rgba(242,237,226,0.45)', color: '#f2ede2' }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c8a05e'; e.currentTarget.style.color = '#ddbd82' }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(242,237,226,0.45)'; e.currentTarget.style.color = '#f2ede2' }}
@@ -95,7 +95,7 @@ export default function CookieConsent() {
           <button
             type="button"
             onClick={() => choose('all')}
-            className="whitespace-nowrap px-5 py-2.5 text-[11px] tracking-[0.12em] uppercase font-medium transition-all duration-300"
+            className="whitespace-nowrap px-5 py-2.5 rounded-full text-[11px] tracking-[0.12em] uppercase font-medium transition-all duration-300"
             style={{ background: '#c8a05e', color: '#0c1614' }}
             onMouseEnter={(e) => { e.currentTarget.style.background = '#ddbd82' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = '#c8a05e' }}

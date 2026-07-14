@@ -48,14 +48,14 @@ export default function Services() {
           Нашите услуги
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'rgba(242,237,226,0.05)' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat, i) => {
             const count = procedures.filter((p) => p.category === cat.id).length
             const tagline = serviceContent[cat.id].tagline
             return (
               <div
                 key={cat.id}
-                className="svc-card group relative overflow-hidden opacity-0 border border-transparent transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-1"
+                className="svc-card group relative overflow-hidden opacity-0 rounded-2xl border border-[rgba(200,160,94,0.14)] transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-1"
                 style={{
                   minHeight: '260px',
                   background: 'var(--bg)',

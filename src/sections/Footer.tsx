@@ -92,7 +92,7 @@ export default function Footer() {
           {/* Обратно към началото */}
           <button
             onClick={() => scrollToPosition(0)}
-            className="group w-12 h-12 flex-none flex items-center justify-center border transition-all duration-300 hover:border-[#c8a05e]/60 hover:-translate-y-1"
+            className="group w-12 h-12 flex-none flex items-center justify-center rounded-full border transition-all duration-300 hover:border-[#c8a05e]/60 hover:-translate-y-1"
             style={{ borderColor: 'rgba(242,237,226,0.12)' }}
             aria-label="Обратно към началото"
           >

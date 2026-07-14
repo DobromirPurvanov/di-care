@@ -234,7 +234,7 @@ export default function WhyUs() {
 
       {/* Снимка на клиниката */}
       <div className="max-w-4xl mx-auto mt-20 px-6">
-        <div className="relative overflow-hidden" style={{ minHeight: '360px', border: '1px solid rgba(200,160,94,0.15)' }}>
+        <div className="relative overflow-hidden rounded-2xl" style={{ minHeight: '360px', border: '1px solid rgba(200,160,94,0.15)' }}>
           {/* Декоративен брандиран панел с лек parallax слой */}
           <div
             ref={photoRef}

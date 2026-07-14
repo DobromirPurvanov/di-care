@@ -112,7 +112,7 @@ export default function Hero() {
               {/* Мини tooltip */}
               <span
                 role="tooltip"
-                className="pointer-events-none absolute left-1/2 bottom-full mb-3 -translate-x-1/2 whitespace-nowrap px-3 py-2 text-[10px] tracking-[0.06em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
+                className="pointer-events-none absolute left-1/2 bottom-full mb-3 -translate-x-1/2 whitespace-nowrap px-3 py-2 rounded-lg text-[10px] tracking-[0.06em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
                 style={{
                   background: 'rgba(12,22,20,0.92)',
                   border: '1px solid rgba(200,160,94,0.3)',

@@ -136,7 +136,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <a
               href="tel:+359882708081"
-              className="hidden md:flex items-center gap-2 px-5 py-2 text-[11px] tracking-[0.15em] uppercase border transition-all duration-300 hover:border-[#c8a05e]/60 hover:text-[#ddbd82]"
+              className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-[11px] tracking-[0.15em] uppercase border transition-all duration-300 hover:border-[#c8a05e]/60 hover:text-[#ddbd82]"
               style={{ borderColor: 'rgba(242,237,226,0.45)', color: '#f2ede2' }}
               aria-label="Обади се на клиниката"
             >
@@ -152,7 +152,7 @@ export default function Header() {
             </BookingButton>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden w-11 h-11 flex items-center justify-center"
+              className="lg:hidden w-11 h-11 flex items-center justify-center rounded-full"
               style={{ border: '1px solid rgba(242,237,226,0.15)' }}
               aria-label={menuOpen ? 'Затвори менюто' : 'Отвори менюто'}
               aria-expanded={menuOpen}

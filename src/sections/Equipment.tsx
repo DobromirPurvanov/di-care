@@ -89,7 +89,7 @@ export default function Equipment() {
           {equipment.map((eq, i) => (
             <div
               key={i}
-              className="eq-card group flex flex-col sm:flex-row overflow-hidden opacity-0 border transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-[3px]"
+              className="eq-card group flex flex-col sm:flex-row overflow-hidden opacity-0 rounded-2xl border transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-[3px]"
               style={{
                 background: 'rgba(242,237,226,0.04)',
                 borderColor: 'rgba(242,237,226,0.06)',

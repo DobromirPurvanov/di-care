@@ -40,7 +40,7 @@ export default function BookingButton({
       data-cal-namespace={CAL_NAMESPACE}
       data-cal-link={CAL_LINK}
       data-cal-config={calConfig(service)}
-      className={`items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${VARIANT[variant]} ${className}`}
+      className={`items-center justify-center gap-2 rounded-full transition-all duration-300 cursor-pointer ${VARIANT[variant]} ${className}`}
       style={style}
       {...rest}
     >

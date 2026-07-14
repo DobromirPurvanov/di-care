@@ -106,6 +106,7 @@ export default function ProcedureGrid() {
               style={{
                 background: 'rgba(12,22,20,0.88)',
                 border: '1px solid rgba(200,160,94,0.35)',
+                borderRadius: '18px',
                 backdropFilter: 'blur(14px)',
                 WebkitBackdropFilter: 'blur(14px)',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
@@ -118,7 +119,7 @@ export default function ProcedureGrid() {
             </div>
           ) : (
             <div
-              className="flex flex-col items-center justify-center text-center px-6 py-12"
+              className="flex flex-col items-center justify-center text-center px-6 py-12 rounded-2xl"
               style={{ border: '1px dashed var(--border)' }}
             >
               <Sparkles size={22} aria-hidden="true" style={{ color: 'rgba(200,160,94,0.5)' }} />
@@ -146,6 +147,7 @@ export default function ProcedureGrid() {
             pointerEvents: active ? 'auto' : 'none',
             background: 'rgba(12,22,20,0.92)',
             border: '1px solid rgba(200,160,94,0.35)',
+            borderRadius: '18px',
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
             boxShadow: '0 12px 40px rgba(0,0,0,0.5)',

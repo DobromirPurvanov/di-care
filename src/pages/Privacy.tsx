@@ -124,6 +124,7 @@ export default function Privacy() {
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             border: '1px solid rgba(200,160,94,0.16)',
+            borderRadius: '20px',
             boxShadow: '0 24px 70px rgba(0,0,0,0.5)',
             padding: 'clamp(1.75rem, 4.5vw, 3.25rem)',
           }}
