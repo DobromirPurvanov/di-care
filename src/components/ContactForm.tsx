@@ -98,7 +98,10 @@ export default function ContactForm() {
     }
 
     setStatus('sending')
-    const payload = { ...values, phone: `+359 ${values.phone.trim()}`, company: undefined }
+    // Полето вече показва фиксиран префикс +359; ако потребителят е въвел и
+    // свой префикс (+359 / 00359 / водеща 0), го премахваме, за да не се дублира.
+    const localPhone = values.phone.trim().replace(/^(\+?359|0)\s*/, '')
+    const payload = { ...values, phone: `+359 ${localPhone}`, company: undefined }
     try {
       // TODO: заменете mock-а с реален endpoint (Vercel Serverless / Resend / Formspree).
       // const res = await fetch('/api/contact', { method: 'POST', body: JSON.stringify(payload) })

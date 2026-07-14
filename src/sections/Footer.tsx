@@ -1,5 +1,5 @@
 import { ArrowUp, Instagram, Facebook } from 'lucide-react'
-import { Link } from 'react-router'
+import { Link, useNavigate, useLocation } from 'react-router'
 import { scrollToPosition, scrollToTarget } from '../lib/scroll'
 
 const QUICK_LINKS = [
@@ -11,6 +11,16 @@ const QUICK_LINKS = [
 ]
 
 export default function Footer() {
+  const navigate = useNavigate()
+  const onHome = useLocation().pathname === '/'
+
+  // Котвите съществуват само на началната страница — от подстраница първо
+  // навигираме натам, после скролваме.
+  const goToAnchor = (href: string) => {
+    if (onHome) scrollToTarget(href)
+    else navigate('/', { state: { scrollTo: href } })
+  }
+
   return (
     <footer className="relative z-10" style={{ padding: '4rem clamp(1.5rem, 4vw, 3rem)' }}>
       {/* Gradient top border */}
@@ -38,11 +48,11 @@ export default function Footer() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-300 hover:border-[#c8a05e]/50 hover:bg-[#c8a05e]/10"
-                  style={{ borderColor: 'rgba(242,237,226,0.1)' }}
-                  aria-label={s.name}
+                  className="w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-300 hover:border-[#c8a05e]/50 hover:bg-[#c8a05e]/10"
+                  style={{ borderColor: 'rgba(242,237,226,0.18)' }}
+                  aria-label={`${s.name} (отваря се в нов раздел)`}
                 >
-                  <s.icon size={15} style={{ color: 'rgba(242,237,226,0.5)' }} aria-hidden="true" />
+                  <s.icon size={16} style={{ color: 'rgba(242,237,226,0.7)' }} aria-hidden="true" />
                 </a>
               ))}
             </div>
@@ -50,31 +60,31 @@ export default function Footer() {
 
           {/* Бързи връзки */}
           <nav className="flex flex-col items-center md:items-start gap-3" aria-label="Бързи връзки">
-            <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.3)' }}>
+            <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.5)' }}>
               Навигация
             </span>
             {QUICK_LINKS.map(l => (
-              <a
+              <button
                 key={l.href}
-                onClick={() => scrollToTarget(l.href)}
-                className="text-xs tracking-[0.12em] uppercase cursor-pointer transition-colors duration-300 hover:text-[#ddbd82]"
-                style={{ color: 'rgba(242,237,226,0.5)' }}
-                role="button"
+                type="button"
+                onClick={() => goToAnchor(l.href)}
+                className="text-xs tracking-[0.12em] uppercase cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] text-left"
+                style={{ color: 'rgba(242,237,226,0.7)' }}
               >
                 {l.label}
-              </a>
+              </button>
             ))}
           </nav>
 
           {/* Правни */}
           <div className="flex flex-col items-center md:items-start gap-3">
-            <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.3)' }}>
+            <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.5)' }}>
               Информация
             </span>
-            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.5)' }}>
+            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.7)' }}>
               Политика за лични данни
             </Link>
-            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.5)' }}>
+            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.7)' }}>
               GDPR
             </Link>
           </div>
@@ -90,7 +100,7 @@ export default function Footer() {
           </button>
         </div>
 
-        <p className="mt-12 text-center md:text-left text-[11px] tracking-wider" style={{ color: 'rgba(242,237,226,0.2)' }}>
+        <p className="mt-12 text-center md:text-left text-[11px] tracking-wider" style={{ color: 'rgba(242,237,226,0.5)' }}>
           © 2026 Dr. Di Clinic. Всички права запазени.
         </p>
       </div>

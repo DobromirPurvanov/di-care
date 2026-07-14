@@ -3,10 +3,15 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { categories, procedures } from '../data/procedures'
 import { serviceContent, clinicPhilosophy } from '../data/services'
 import BookingButton from '../components/BookingButton'
+import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 export default function ServicePage() {
   const { slug } = useParams()
   const category = categories.find((c) => c.slug === slug)
+
+  // Заглавието трябва да е стабилно между render-ите (hook правилата не
+  // допускат условно извикване след ранния return по-долу).
+  useDocumentTitle(category ? `${category.label} | Dr. Di Clinic` : 'Dr. Di Clinic')
 
   // Непозната услуга → обратно към началото.
   if (!category) return <Navigate to="/" replace />

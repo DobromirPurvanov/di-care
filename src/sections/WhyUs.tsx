@@ -12,7 +12,7 @@ const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=' +
 const slides = [
   {
     title: 'МЕДИЦИНА',
-    text: 'Младостта започва с медицина. Нашият подход се основава на диагностика, клиничен опит и дълбоко разбиране на биологичните процеси на стареене. Ние не просто лекуваме видимите признаци — работим с техните причини.',
+    text: 'Младостта започва с медицина. Нашият подход се основава на диагностика, клиничен опит и разбиране на биологичните процеси на стареене. Не лекуваме само видимите признаци, а работим с причините им.',
   },
   {
     title: 'ИНДИВИДУАЛНОСТ',
@@ -28,7 +28,7 @@ const slides = [
   },
   {
     title: 'ЕСТЕСТВЕНОСТ',
-    text: 'Най-добрите резултати изглеждат естествено. Хората забелязват вашата свежест, увереност и привлекателност — не процедурите зад тях.',
+    text: 'Най-добрите резултати изглеждат естествено. Хората забелязват вашата свежест и увереност, а не процедурите зад тях.',
   },
   {
     title: 'НАПРЕДНАЛА МЕДИЦИНА',
@@ -41,7 +41,7 @@ export default function WhyUs() {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const slidesRef = useRef<HTMLDivElement[]>([])
   const titlesRef = useRef<HTMLHeadingElement[]>([])
-  const dotsRef = useRef<HTMLButtonElement[]>([])
+  const dotsRef = useRef<HTMLSpanElement[]>([])
   const counterRef = useRef<HTMLSpanElement>(null)
   const photoRef = useRef<HTMLDivElement>(null)
   const stRef = useRef<ScrollTrigger | null>(null)
@@ -200,17 +200,24 @@ export default function WhyUs() {
           {slides.map((s, i) => (
             <button
               key={i}
-              ref={el => { if (el) dotsRef.current[i] = el }}
+              type="button"
               onClick={() => goToSlide(i)}
-              className="w-[10px] h-[10px] rounded-full border transition-all duration-300 p-0"
-              style={{
-                borderColor: i === 0 ? '#c8a05e' : 'rgba(242,237,226,0.3)',
-                background: i === 0 ? '#c8a05e' : 'transparent',
-                minWidth: 10,
-              }}
+              className="relative flex items-center justify-center"
+              style={{ width: 10, height: 10, background: 'transparent', border: 'none', padding: 0 }}
               aria-label={`Слайд ${i + 1}: ${s.title}`}
               role="tab"
-            />
+            >
+              {/* Разширена tap-зона (44×44) без промяна на визуалния размер */}
+              <span aria-hidden="true" className="absolute" style={{ inset: '-17px' }} />
+              <span
+                ref={el => { if (el) dotsRef.current[i] = el }}
+                className="block w-[10px] h-[10px] rounded-full border transition-all duration-300"
+                style={{
+                  borderColor: i === 0 ? '#c8a05e' : 'rgba(242,237,226,0.3)',
+                  background: i === 0 ? '#c8a05e' : 'transparent',
+                }}
+              />
+            </button>
           ))}
         </div>
 

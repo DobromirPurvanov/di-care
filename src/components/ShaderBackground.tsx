@@ -86,7 +86,7 @@ export default function ShaderBackground() {
           float along = dot(toStar, dir);
           float across = abs(dot(toStar, vec2(-dir.y, dir.x)));
           float trail = exp(-across * across * 8000.0) * exp(-along * along * 200.0) * smoothstep(0.0, 0.1, t) * smoothstep(1.0, 0.7, t);
-          shoot += trail * 0.8;
+          shoot += trail * 0.26;
         }
 
         vec3 color = vec3(0.047, 0.086, 0.078);

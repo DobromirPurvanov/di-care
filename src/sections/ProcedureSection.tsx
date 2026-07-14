@@ -89,6 +89,8 @@ export default function ProcedureSection() {
           <img
             src="/images/logo-di-care-gold.png"
             alt="Dr. Di Clinic"
+            width={200}
+            height={129}
             className="w-auto mb-6 select-none"
             style={{
               height: 'clamp(44px, 6vw, 60px)',

@@ -46,8 +46,7 @@ export default function CookieConsent() {
 
   return (
     <div
-      role="dialog"
-      aria-live="polite"
+      role="region"
       aria-label="Съгласие за бисквитки"
       className="fixed inset-x-0 bottom-0 z-[1000] flex justify-center px-4 pb-4 sm:pb-6 pointer-events-none"
     >

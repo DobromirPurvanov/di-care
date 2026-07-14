@@ -91,7 +91,7 @@ export default function Services() {
                 </span>
 
                 <div className="relative z-10 h-full flex flex-col justify-end p-6" style={{ minHeight: '260px' }}>
-                  <Link to={`/uslugi/${cat.slug}`} className="block" aria-label={`${cat.label} — ${tagline}`}>
+                  <Link to={`/uslugi/${cat.slug}`} className="block" aria-label={`${cat.label}: ${tagline}`}>
                     <h3 className="font-light text-lg tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
                       {cat.label}
                     </h3>

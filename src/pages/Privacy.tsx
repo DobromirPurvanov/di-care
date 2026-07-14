@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
+import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 /** Дата на последна актуализация — обновявайте при промяна на политиката. */
 const UPDATED = '14 юли 2026 г.'
@@ -99,6 +100,7 @@ const SECTIONS: Section[] = [
 ]
 
 export default function Privacy() {
+  useDocumentTitle('Политика за поверителност | Dr. Di Clinic')
   return (
     <main
       className="relative z-10"

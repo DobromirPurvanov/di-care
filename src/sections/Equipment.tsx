@@ -81,7 +81,7 @@ export default function Equipment() {
         >
           Апаратура
         </h2>
-        <p className="text-center text-xs tracking-[0.15em] uppercase mb-16" style={{ color: 'rgba(242,237,226,0.4)' }}>
+        <p className="text-center text-xs tracking-[0.15em] uppercase mb-16" style={{ color: 'rgba(242,237,226,0.6)' }}>
           Световно признати лазерни системи
         </p>
 
@@ -125,7 +125,7 @@ export default function Equipment() {
                 <h3 className="font-light text-sm tracking-[0.1em] uppercase group-hover:text-[#ddbd82] transition-colors">
                   {eq.name}
                 </h3>
-                <p className="text-xs mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.5)' }}>
+                <p className="text-xs mt-2 leading-relaxed" style={{ color: 'rgba(242,237,226,0.72)' }}>
                   {eq.desc}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">

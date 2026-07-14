@@ -117,7 +117,7 @@ export default function Contact() {
             >
               {/* TODO: за златен custom pin е нужен Google Maps JS API с ключ */}
               <iframe
-                title="Локация на Dr. Di Clinic — ул. Любен Каравелов 71, Варна"
+                title="Локация на Dr. Di Clinic, ул. Любен Каравелов 71, Варна"
                 src={MAPS_EMBED}
                 className="map-dark w-full"
                 style={{ border: 0, minHeight: '300px', height: '100%', display: 'block' }}
@@ -144,7 +144,7 @@ export default function Contact() {
             >
               <item.icon size={18} className="flex-none mt-[2px]" style={{ color: 'var(--accent-light)' }} aria-hidden="true" />
               <div className="min-w-0">
-                <p className="text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: 'rgba(242,237,226,0.35)' }}>
+                <p className="text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: 'rgba(242,237,226,0.55)' }}>
                   {item.label}
                 </p>
                 {item.label === 'Работно време' ? (
@@ -183,7 +183,7 @@ export default function Contact() {
 
         {/* Социални мрежи */}
         <div className="ct-reveal mt-10 flex items-center gap-4 opacity-0" style={{ transform: 'translateY(20px)' }}>
-          <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.3)' }}>
+          <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: 'rgba(242,237,226,0.55)' }}>
             Последвайте ни
           </span>
           {SOCIALS.map(s => (

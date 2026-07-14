@@ -34,7 +34,9 @@ export default function LoadingScreen() {
     >
       <img
         src="/images/logo-di-care-gold.png"
-        alt=""
+        alt="Dr. Di Clinic"
+        width={200}
+        height={129}
         className="w-auto select-none"
         style={{ height: '56px', animation: 'loaderPulse 1.6s ease-in-out infinite' }}
         draggable={false}

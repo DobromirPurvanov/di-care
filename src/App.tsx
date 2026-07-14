@@ -77,6 +77,13 @@ export default function App() {
       <Suspense fallback={null}>
         <ShaderBackground />
       </Suspense>
+      {/* Затъмняващ слой над анимирания фон — подобрява четимостта на текста
+          навсякъде (седи между shader-а на z-0 и съдържанието на z-10). */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none"
+        style={{ zIndex: 1, background: 'rgba(12,22,20,0.46)' }}
+      />
       <Header />
       <ScrollToTop />
       <Routes>

@@ -89,32 +89,34 @@ export default function Header() {
       >
         <ScrollProgress />
         <div className="flex items-center justify-between h-16 lg:h-[72px]" style={{ padding: '0 clamp(1.5rem, 4vw, 3rem)' }}>
-          <a
+          <button
+            type="button"
             onClick={() => handleNav('#hero')}
             className="flex items-center gap-2 cursor-pointer"
-            role="button"
             aria-label="Към началото"
           >
             <img
               src="/images/logo-di-care-gold.png"
-              alt="Di Care"
+              alt="Dr. Di Clinic"
+              width={200}
+              height={129}
               className="w-auto select-none"
               style={{ height: 'clamp(30px, 4vw, 38px)' }}
               draggable={false}
             />
-          </a>
+          </button>
 
           <nav className="hidden lg:flex items-center" style={{ gap: 'clamp(1.25rem, 2.5vw, 2.25rem)' }} aria-label="Основна навигация">
             {navItems.map(item => {
               const isActive = active === item.href
               return (
-                <a
+                <button
                   key={item.href}
+                  type="button"
                   onClick={() => handleNav(item.href)}
                   className="relative text-xs tracking-[0.15em] uppercase cursor-pointer transition-colors duration-300 py-2"
                   style={{ color: isActive ? '#f2ede2' : 'rgba(242,237,226,0.72)' }}
-                  aria-current={isActive ? 'true' : undefined}
-                  role="button"
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   {item.label}
                   <span
@@ -126,7 +128,7 @@ export default function Header() {
                       transformOrigin: 'left center',
                     }}
                   />
-                </a>
+                </button>
               )
             })}
           </nav>
@@ -183,9 +185,11 @@ export default function Header() {
         aria-hidden={!menuOpen}
       >
         {navItems.map((item, i) => (
-          <a
+          <button
             key={item.href}
+            type="button"
             onClick={() => handleNav(item.href)}
+            tabIndex={menuOpen ? 0 : -1}
             className="text-xl tracking-[0.2em] uppercase font-extralight cursor-pointer transition-all duration-300"
             style={{
               color: active === item.href ? '#ddbd82' : '#f2ede2',
@@ -193,10 +197,10 @@ export default function Header() {
               transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
               transitionDelay: menuOpen ? `${i * 80 + 120}ms` : '0ms',
             }}
-            role="button"
+            aria-current={active === item.href ? 'page' : undefined}
           >
             {item.label}
-          </a>
+          </button>
         ))}
         <span
           className="mt-4 text-[10px] tracking-[0.3em] uppercase"
