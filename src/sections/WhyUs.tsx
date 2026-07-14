@@ -76,7 +76,9 @@ export default function WhyUs() {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: `+=${N * 100}%`,
+          // По-къс pin: ~45% скрол на слайд вместо цял екран — секцията се
+          // подминава чувствително по-бързо, без да губи crossfade ефекта.
+          end: `+=${N * 45}%`,
           pin: true,
           scrub: 0.6,
           onUpdate: self => {
