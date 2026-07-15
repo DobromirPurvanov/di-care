@@ -133,8 +133,7 @@ export default function ShaderBackground() {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const startTime = performance.now()
-    const frameInterval = isMobile ? 1000 / 30 : 0
-    let lastFrame = 0
+    const staticFrame = reduced || isMobile
 
     const drawFrame = () => {
       const t = (performance.now() - startTime) / 1000
@@ -142,22 +141,20 @@ export default function ShaderBackground() {
       gl!.uniform2f(uRes, canvas!.width, canvas!.height)
       gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4)
     }
-    const loop = (now: number) => {
-      if (!frameInterval || now - lastFrame >= frameInterval) {
-        drawFrame()
-        lastFrame = now
-      }
+    const loop = () => {
+      drawFrame()
       animId = requestAnimationFrame(loop)
     }
 
-    // При reduced-motion рисуваме един статичен кадър, без анимационен цикъл.
-    if (reduced) drawFrame()
+    // На мобилно фонът е статичен: запазва визията, но освобождава GPU за
+    // скрол, формите и 3D сферата. На десктоп остава напълно анимиран.
+    if (staticFrame) drawFrame()
     else animId = requestAnimationFrame(loop)
 
     // Паузираме, докато табът е скрит — пести батерия/топлина на мобилни.
     const onVisibility = () => {
       cancelAnimationFrame(animId)
-      if (!document.hidden && !reduced) animId = requestAnimationFrame(loop)
+      if (!document.hidden && !staticFrame) animId = requestAnimationFrame(loop)
     }
     document.addEventListener('visibilitychange', onVisibility)
 

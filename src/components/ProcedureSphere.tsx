@@ -51,7 +51,7 @@ export default function ProcedureSphere() {
 
     const glRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     glRenderer.setSize(w, h)
-    glRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    glRenderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 2))
     container.appendChild(glRenderer.domElement)
     Object.assign(glRenderer.domElement.style, { position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' })
 
@@ -126,7 +126,7 @@ export default function ProcedureSphere() {
       }
       scene.add(stars)
     }
-    addStars()
+    addStars(isMobile ? 120 : 220)
 
     // Централно златно сияние
     const centerGlow = new THREE.Sprite(
@@ -197,8 +197,18 @@ export default function ProcedureSphere() {
     const clock = new THREE.Clock()
     let elapsed = 0
     let animId: number
-    function animate() {
+    let running = false
+    let lastFrame = 0
+    const frameInterval = isMobile ? 1000 / 30 : 0
+    const worldPosition = new THREE.Vector3()
+    const cameraDirection = new THREE.Vector3()
+    const toLabelDirection = new THREE.Vector3()
+
+    function animate(now: number) {
+      if (!running) return
       animId = requestAnimationFrame(animate)
+      if (frameInterval && now - lastFrame < frameInterval) return
+      lastFrame = now
       controls.update()
 
       // Времево-базирана конвергенция — еднаква скорост при всякакъв fps
@@ -212,15 +222,20 @@ export default function ProcedureSphere() {
       }
       centerGlow.material.opacity = 0.13 + 0.05 * Math.sin(elapsed * 0.8)
 
+      // Тези стойности са еднакви за всички етикети в кадъра — изчисляваме
+      // ги веднъж, вместо по 30 пъти на frame.
+      camera.getWorldDirection(cameraDirection)
+      const dCamera = camera.position.length()
+      const minDist = dCamera - sphereRadius
+      const maxDist = Math.sqrt(dCamera * dCamera - sphereRadius * sphereRadius)
+
       labels.forEach((label, idx) => {
         label.obj.position.lerp(label.target, k)
         label.obj.quaternion.copy(camera.quaternion)
 
-        const pos = label.obj.getWorldPosition(new THREE.Vector3())
-        const camDir = new THREE.Vector3()
-        camera.getWorldDirection(camDir)
-        const toLabel = pos.clone().sub(camera.position).normalize()
-        const dot = camDir.dot(toLabel)
+        label.obj.getWorldPosition(worldPosition)
+        toLabelDirection.copy(worldPosition).sub(camera.position).normalize()
+        const dot = cameraDirection.dot(toLabelDirection)
 
         const isActive = activeIdxRef.current === idx
 
@@ -230,10 +245,7 @@ export default function ProcedureSphere() {
           return
         }
 
-        const dCamera = camera.position.length()
-        const minDist = dCamera - sphereRadius
-        const maxDist = Math.sqrt(dCamera * dCamera - sphereRadius * sphereRadius)
-        const dist = camera.position.distanceTo(pos)
+        const dist = camera.position.distanceTo(worldPosition)
 
         if (dist > maxDist && !isActive) {
           label.element.style.display = 'none'
@@ -278,7 +290,35 @@ export default function ProcedureSphere() {
       glRenderer.render(scene, camera)
       cssRenderer.render(scene, camera)
     }
-    animate()
+
+    function startAnimation() {
+      if (running) return
+      running = true
+      lastFrame = 0
+      clock.getDelta()
+      animId = requestAnimationFrame(animate)
+    }
+
+    function stopAnimation() {
+      if (!running) return
+      running = false
+      cancelAnimationFrame(animId)
+    }
+
+    // Най-голямата mobile оптимизация: освобождаваме WebGL/CSS3D render loop-а
+    // веднага след като потребителят подмине сферата.
+    const viewportObserver = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver(
+          entries => {
+            if (entries.some(entry => entry.isIntersecting)) startAnimation()
+            else stopAnimation()
+          },
+          { rootMargin: '120px 0px' }
+        )
+      : null
+
+    if (viewportObserver) viewportObserver.observe(container)
+    else startAnimation()
 
     // Resize
     function onResize() {
@@ -301,7 +341,8 @@ export default function ProcedureSphere() {
       window.removeEventListener('resize', onResize)
       container.removeEventListener('mouseenter', pauseRotate)
       container.removeEventListener('mouseleave', resumeRotate)
-      cancelAnimationFrame(animId)
+      viewportObserver?.disconnect()
+      stopAnimation()
       controls.dispose()
       glRenderer.dispose()
       glowTexture.dispose()

@@ -15,9 +15,12 @@ export default function Services() {
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const mobile = window.matchMedia('(max-width: 768px)').matches || window.matchMedia('(pointer: coarse)').matches
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray<HTMLElement>('.svc-card')
-      if (reduced) {
+      // На мобилно съдържанието е видимо веднага. Така няма празен екран,
+      // докато тежката 3D сфера освобождава GPU ресурси при скрол надолу.
+      if (reduced || mobile) {
         gsap.set([titleRef.current, ...cards], { opacity: 1, y: 0 })
         return
       }
@@ -40,9 +43,6 @@ export default function Services() {
       id="services"
       ref={sectionRef}
       className="services-section relative z-10"
-      style={{
-        background: 'linear-gradient(180deg, transparent 0%, rgba(200,160,94,0.03) 40%, transparent 100%)',
-      }}
     >
       <div className="max-w-6xl mx-auto">
         <h2
