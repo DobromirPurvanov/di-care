@@ -240,7 +240,8 @@
     border: none;
     border-bottom: 1px solid rgba(242,237,226,0.15);
     color: #f2ede2;
-    font-size: 15px;
+    /* 16px минимум — под 16px iOS Safari прави zoom при фокус на полето */
+    font-size: 16px;
     font-weight: 300;
     padding: 22px 0 10px;
     min-height: 48px;

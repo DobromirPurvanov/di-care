@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router'
 import { Menu, X, Phone } from 'lucide-react'
 import ScrollProgress from './ScrollProgress'
 import BookingButton from './BookingButton'
-import { scrollToTarget } from '../lib/scroll'
+import { getLenis, scrollToTarget } from '../lib/scroll'
 
 const navItems = [
   { label: 'Начало', href: '#hero' },
@@ -58,6 +58,13 @@ export default function Header() {
     sections.forEach(s => observer.observe(s))
     return () => observer.disconnect()
   }, [onHome])
+
+  // Заключваме фоновия скрол, докато мобилното меню е отворено.
+  useEffect(() => {
+    const lenis = getLenis()
+    if (menuOpen) lenis?.stop()
+    else lenis?.start()
+  }, [menuOpen])
 
   const handleNav = (href: string) => {
     setMenuOpen(false)
@@ -202,6 +209,37 @@ export default function Header() {
             {item.label}
           </button>
         ))}
+
+        {/* Основен CTA + телефон вътре в мобилното меню */}
+        <BookingButton
+          variant="primary"
+          onClick={() => setMenuOpen(false)}
+          className="mt-4 inline-flex px-8 py-3.5 text-xs tracking-[0.18em] uppercase font-medium"
+          style={{
+            opacity: menuOpen ? 1 : 0,
+            transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 300ms ease, transform 300ms ease, background 300ms ease',
+            transitionDelay: menuOpen ? `${navItems.length * 80 + 120}ms` : '0ms',
+          }}
+          aria-label="Запази час онлайн"
+        >
+          Запази час
+        </BookingButton>
+        <a
+          href="tel:+359882708081"
+          onClick={() => setMenuOpen(false)}
+          tabIndex={menuOpen ? 0 : -1}
+          className="text-sm tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]"
+          style={{
+            color: 'rgba(242,237,226,0.7)',
+            opacity: menuOpen ? 1 : 0,
+            transition: 'opacity 300ms ease',
+            transitionDelay: menuOpen ? `${navItems.length * 80 + 200}ms` : '0ms',
+          }}
+        >
+          +359 88 270 8081
+        </a>
+
         <span
           className="mt-4 text-[10px] tracking-[0.3em] uppercase"
           style={{

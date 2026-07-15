@@ -264,7 +264,7 @@ export default function ProcedureSphere() {
       ref={containerRef}
       style={{
         width: '100%',
-        height: 'min(80vh, 800px)',
+        height: 'min(80svh, 800px)',
         position: 'relative',
         cursor: 'grab',
         touchAction: 'pan-y',

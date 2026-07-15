@@ -68,7 +68,7 @@ export default function Footer() {
                 key={l.href}
                 type="button"
                 onClick={() => goToAnchor(l.href)}
-                className="text-xs tracking-[0.12em] uppercase cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] text-left"
+                className="text-xs tracking-[0.12em] uppercase cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] text-left py-1"
                 style={{ color: 'rgba(242,237,226,0.7)' }}
               >
                 {l.label}
@@ -81,10 +81,10 @@ export default function Footer() {
             <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.5)' }}>
               Информация
             </span>
-            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.7)' }}>
+            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82] py-1" style={{ color: 'rgba(242,237,226,0.7)' }}>
               Политика за лични данни
             </Link>
-            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.7)' }}>
+            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82] py-1" style={{ color: 'rgba(242,237,226,0.7)' }}>
               GDPR
             </Link>
           </div>

@@ -1,4 +1,4 @@
-import type { ReactNode, CSSProperties } from 'react'
+import type { ReactNode, CSSProperties, MouseEventHandler } from 'react'
 import { CAL_LINK, CAL_NAMESPACE, calConfig } from '../lib/booking'
 
 type Variant = 'primary' | 'ghost' | 'link'
@@ -12,6 +12,9 @@ interface Props {
   style?: CSSProperties
   children: ReactNode
   'aria-label'?: string
+  /** Допълнителен клик (напр. за затваряне на мобилното меню). Cal popup-ът
+      се отваря независимо чрез data-cal-link. */
+  onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
 // Вариантът задава само цветовете, за да работят hover състоянията чрез Tailwind.

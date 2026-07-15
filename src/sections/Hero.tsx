@@ -68,7 +68,7 @@ export default function Hero() {
         <span
           ref={line1Ref}
           className="block font-serif-luxe uppercase tracking-[0.18em] leading-[1.12] opacity-0"
-          style={{ fontSize: 'clamp(1.7rem, 5vw, 3.9rem)', fontWeight: 400, transform: 'translateY(50px)' }}
+          style={{ fontSize: 'clamp(1.5rem, 5.2vw, 3.9rem)', fontWeight: 400, transform: 'translateY(50px)' }}
         >
           БЪДЕЩЕТО
         </span>
@@ -76,7 +76,7 @@ export default function Hero() {
           ref={line2Ref}
           className="block font-serif-luxe uppercase tracking-[0.14em] leading-[1.12] opacity-0"
           style={{
-            fontSize: 'clamp(1.7rem, 5vw, 3.9rem)',
+            fontSize: 'clamp(1.5rem, 5.2vw, 3.9rem)',
             fontWeight: 500,
             transform: 'translateY(50px)',
             textShadow: '0 0 40px rgba(242,237,226,0.12)',
@@ -87,7 +87,7 @@ export default function Hero() {
         <span
           ref={charsWrapRef}
           className="block font-serif-luxe uppercase tracking-[0.14em] leading-[1.12] text-gradient glow-text glow-pulse opacity-0"
-          style={{ fontSize: 'clamp(1.7rem, 5vw, 3.9rem)', fontWeight: 600, transform: 'translateY(50px)' }}
+          style={{ fontSize: 'clamp(1.5rem, 5.2vw, 3.9rem)', fontWeight: 600, transform: 'translateY(50px)' }}
         >
           {lastLine}
         </span>
@@ -130,7 +130,8 @@ export default function Hero() {
       <button
         type="button"
         ref={scrollHintRef}
-        className="group absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 cursor-pointer z-20"
+        className="group absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 cursor-pointer z-20"
+        style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
         onClick={() => scrollToTarget('#procedures')}
         aria-label="Скролни надолу към процедурите"
       >

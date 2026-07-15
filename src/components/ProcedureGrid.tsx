@@ -16,20 +16,20 @@ function DetailBody({ active, onClose }: { active: Procedure; onClose: () => voi
         </h3>
         <button
           onClick={onClose}
-          className="p-2 -m-2 transition-colors hover:text-[#f2ede2]"
-          style={{ color: 'rgba(242,237,226,0.45)' }}
+          className="flex items-center justify-center min-w-[44px] min-h-[44px] -mt-2.5 -mr-2.5 flex-none transition-colors hover:text-[#f2ede2]"
+          style={{ color: 'rgba(242,237,226,0.55)' }}
           aria-label="Затвори детайлите"
         >
-          <X size={15} aria-hidden="true" />
+          <X size={18} aria-hidden="true" />
         </button>
       </div>
       <p className="mt-3 text-[14px] leading-relaxed" style={{ color: 'rgba(242,237,226,0.82)' }}>
         {active.description}
       </p>
-      <div className="mt-4 flex items-center gap-5">
+      <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1">
         <Link
           to={`/uslugi/${category.slug}`}
-          className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
+          className="inline-flex items-center gap-2 min-h-[44px] text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
           style={{ color: '#c8a05e' }}
         >
           Научете повече
@@ -38,7 +38,7 @@ function DetailBody({ active, onClose }: { active: Procedure; onClose: () => voi
         <BookingButton
           variant="link"
           service={category.label}
-          className="inline-flex text-[11px] tracking-[0.15em] uppercase"
+          className="inline-flex min-h-[44px] text-[11px] tracking-[0.15em] uppercase"
         >
           Запази час
         </BookingButton>
@@ -139,7 +139,7 @@ export default function ProcedureGrid() {
           трансформиран родител (GSAP transform чупи position: fixed). */}
       {createPortal(
         <div
-          className="fixed left-3 right-3 z-40 lg:hidden transition-all duration-[400ms]"
+          className="fixed left-3 right-3 z-[1010] lg:hidden transition-all duration-[400ms]"
           style={{
             bottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
             opacity: active ? 1 : 0,

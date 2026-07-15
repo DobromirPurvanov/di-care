@@ -48,7 +48,8 @@ export default function CookieConsent() {
     <div
       role="region"
       aria-label="Съгласие за бисквитки"
-      className="fixed inset-x-0 bottom-0 z-[1000] flex justify-center px-4 pb-4 sm:pb-6 pointer-events-none"
+      className="fixed inset-x-0 bottom-0 z-[1000] flex justify-center px-4 pointer-events-none"
+      style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))', paddingTop: '0.5rem' }}
     >
       <div
         className="pointer-events-auto w-full max-w-2xl flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-5 sm:p-6"
@@ -85,7 +86,7 @@ export default function CookieConsent() {
           <button
             type="button"
             onClick={() => choose('essential')}
-            className="whitespace-nowrap px-4 py-2.5 rounded-full text-[11px] tracking-[0.12em] uppercase transition-all duration-300 border"
+            className="whitespace-nowrap px-5 min-h-[44px] rounded-full text-[11px] tracking-[0.12em] uppercase transition-all duration-300 border"
             style={{ borderColor: 'rgba(242,237,226,0.45)', color: '#f2ede2' }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c8a05e'; e.currentTarget.style.color = '#ddbd82' }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(242,237,226,0.45)'; e.currentTarget.style.color = '#f2ede2' }}
@@ -95,7 +96,7 @@ export default function CookieConsent() {
           <button
             type="button"
             onClick={() => choose('all')}
-            className="whitespace-nowrap px-5 py-2.5 rounded-full text-[11px] tracking-[0.12em] uppercase font-medium transition-all duration-300"
+            className="whitespace-nowrap px-6 min-h-[44px] rounded-full text-[11px] tracking-[0.12em] uppercase font-medium transition-all duration-300"
             style={{ background: '#c8a05e', color: '#0c1614' }}
             onMouseEnter={(e) => { e.currentTarget.style.background = '#ddbd82' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = '#c8a05e' }}

@@ -130,18 +130,34 @@ export default function ShaderBackground() {
     resize()
     window.addEventListener('resize', resize)
 
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const startTime = performance.now()
-    function render() {
+
+    const drawFrame = () => {
       const t = (performance.now() - startTime) / 1000
       gl!.uniform1f(uTime, t)
       gl!.uniform2f(uRes, canvas!.width, canvas!.height)
       gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4)
-      animId = requestAnimationFrame(render)
     }
-    render()
+    const loop = () => {
+      drawFrame()
+      animId = requestAnimationFrame(loop)
+    }
+
+    // При reduced-motion рисуваме един статичен кадър, без анимационен цикъл.
+    if (reduced) drawFrame()
+    else loop()
+
+    // Паузираме, докато табът е скрит — пести батерия/топлина на мобилни.
+    const onVisibility = () => {
+      cancelAnimationFrame(animId)
+      if (!document.hidden && !reduced) animId = requestAnimationFrame(loop)
+    }
+    document.addEventListener('visibilitychange', onVisibility)
 
     return () => {
       window.removeEventListener('resize', resize)
+      document.removeEventListener('visibilitychange', onVisibility)
       cancelAnimationFrame(animId)
     }
   }, [])

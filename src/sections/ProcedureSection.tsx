@@ -15,7 +15,7 @@ function SphereFallback() {
   return (
     <div
       className="w-full flex items-center justify-center"
-      style={{ height: 'min(80vh, 800px)' }}
+      style={{ height: 'min(80svh, 800px)' }}
       aria-label="Зареждане на 3D сферата"
       role="status"
     >
@@ -36,12 +36,15 @@ export default function ProcedureSection() {
   const [isTouch] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
   )
-  // По подразбиране списъчният изглед при reduced-motion — сферата се самозавърта.
-  const [view, setView] = useState<View>(() =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ? 'list'
-      : 'sphere'
-  )
+  // По подразбиране списъчният изглед на тъч устройства (там 30-те етикета на
+  // сферата се застъпват/отрязват и трудно се уцелват) и при reduced-motion.
+  // На десктоп с мишка стартираме с ефектната 3D сфера.
+  const [view, setView] = useState<View>(() => {
+    if (typeof window === 'undefined') return 'sphere'
+    const coarse = window.matchMedia('(pointer: coarse)').matches
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    return coarse || reduced ? 'list' : 'sphere'
+  })
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -99,16 +102,17 @@ export default function ProcedureSection() {
             draggable={false}
           />
 
-          {/* Заглавие с декоративни странични линии */}
-          <div className="flex items-center gap-5 sm:gap-8 w-full max-w-3xl">
-            <span aria-hidden="true" className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,160,94,0.4))' }} />
+          {/* Заглавие с декоративни странични линии (линиите се крият на мобилно,
+              за да не изтласкват заглавието извън екрана) */}
+          <div className="flex items-center justify-center gap-5 sm:gap-8 w-full max-w-3xl">
+            <span aria-hidden="true" className="hidden sm:block flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,160,94,0.4))' }} />
             <h2
-              className="text-gradient text-center font-extralight uppercase tracking-[0.15em] whitespace-nowrap"
+              className="text-gradient text-center font-extralight uppercase tracking-[0.15em]"
               style={{ fontSize: 'clamp(1.4rem, 3.2vw, 2.4rem)', lineHeight: 1.2 }}
             >
               Изберете процедура
             </h2>
-            <span aria-hidden="true" className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(200,160,94,0.4), transparent)' }} />
+            <span aria-hidden="true" className="hidden sm:block flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(200,160,94,0.4), transparent)' }} />
           </div>
 
           {/* Анимиран златен разделител — разтваря се от центъра */}
