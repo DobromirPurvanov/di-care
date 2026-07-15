@@ -140,8 +140,11 @@ export default function Header() {
   return (
     <>
       <header
-        className="fixed top-0 left-0 w-full z-[1010] will-change-transform"
+        className="fixed -top-px inset-x-0 z-[1010] will-change-transform"
         style={{
+          // 1px bleed + safe-area покритие премахват тънкия луфт над header-а
+          // при iOS и при subpixel рендериране след show/hide transform.
+          paddingTop: 'calc(1px + env(safe-area-inset-top))',
           backgroundColor: scrolled || menuOpen ? 'rgba(12,22,20,0.9)' : 'transparent',
           backdropFilter: scrolled || menuOpen ? 'blur(20px) saturate(1.2)' : 'none',
           borderBottom: scrolled ? '1px solid rgba(242,237,226,0.05)' : '1px solid transparent',

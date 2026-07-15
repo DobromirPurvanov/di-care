@@ -21,6 +21,8 @@
   html {
     scroll-behavior: auto; /* Lenis поема плавния скрол */
     width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
@@ -30,6 +32,9 @@
   .lenis.lenis-stopped { overflow: hidden; }
 
   body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -38,6 +43,21 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  @supports (overflow: clip) {
+    html,
+    body,
+    #root {
+      overflow-x: clip;
+    }
   }
 
   /* Native mobile scroll се заключва отделно за менюто и Cal модала, за да
@@ -396,10 +416,11 @@
   /* Сферата използва цялата ширина на телефона, включително секционния
      padding. Стабилната височина не оставя голямо празно поле около нея. */
   .procedure-sphere {
-    width: 100vw;
-    max-width: 100vw;
+    --sphere-section-gutter: clamp(1rem, 4vw, 3rem);
+    width: calc(100% + var(--sphere-section-gutter) + var(--sphere-section-gutter));
+    max-width: none;
     height: clamp(380px, 108vw, 520px);
-    margin-left: calc(50% - 50vw);
+    margin-left: calc(0px - var(--sphere-section-gutter));
   }
 }
 
