@@ -287,10 +287,13 @@ export default function ProcedureSphere() {
       camera.aspect = nw / nh
       // Пресмятаме наново разстоянието — при завъртане на телефона или скриване
       // на адрес-лентата съотношението се променя и сферата пак трябва да пасне.
-      camera.position.z = fitDistance(nw, nh)
+      // setLength е важно: промяната само на Z запазваше X/Y след завъртане и
+      // при всеки следващ resize увеличаваше общото разстояние до камерата.
+      camera.position.setLength(fitDistance(nw, nh))
       camera.updateProjectionMatrix()
       glRenderer.setSize(nw, nh)
       cssRenderer.setSize(nw, nh)
+      controls.update()
     }
     window.addEventListener('resize', onResize)
 
