@@ -43,8 +43,8 @@ export default function ProcedureSphere() {
       const distV = sphereRadius / Math.tan(halfV)
       const distH = sphereRadius / Math.tan(halfH)
       // 1.5 оставяше почти една трета празно място отстрани и смаляваше
-      // етикетите. 1.32 дава осезаемо по-голяма сфера, но пази място за тях.
-      const margin = isMobile ? 1.32 : 1.25
+      // етикетите. 1.29 приближава сферата, без да отрязва предните етикети.
+      const margin = isMobile ? 1.29 : 1.25
       return Math.max(distV, distH) * margin
     }
     camera.position.z = fitDistance(w, h)
@@ -126,13 +126,64 @@ export default function ProcedureSphere() {
       }
       scene.add(stars)
     }
-    addStars(isMobile ? 120 : 220)
+    addStars(isMobile ? 150 : 220)
+
+    // Фина геометрична обвивка и орбити очертават реалния обем на сферата.
+    // Това са само няколко евтини линии — визуално запълват композицията,
+    // без тежки частици, post-processing или допълнителен render loop.
+    const shellGeometry = new THREE.IcosahedronGeometry(sphereRadius * 0.99, 2)
+    const shellMaterial = new THREE.MeshBasicMaterial({
+      color: 0xc8a05e,
+      wireframe: true,
+      transparent: true,
+      opacity: isMobile ? 0.1 : 0.065,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    })
+    const shell = new THREE.Mesh(shellGeometry, shellMaterial)
+    scene.add(shell)
+
+    const orbitMaterial = new THREE.LineBasicMaterial({
+      color: 0xddbd82,
+      transparent: true,
+      opacity: isMobile ? 0.24 : 0.16,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    })
+    const orbitGroup = new THREE.Group()
+    const orbitGeometries: THREE.BufferGeometry[] = []
+
+    function addOrbit(radius: number, rotationX: number, rotationY: number, rotationZ: number) {
+      const points: THREE.Vector3[] = []
+      const segments = 96
+      for (let i = 0; i < segments; i++) {
+        const angle = (i / segments) * Math.PI * 2
+        points.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0))
+      }
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points)
+      const ring = new THREE.LineLoop(geometry, orbitMaterial)
+      ring.rotation.set(rotationX, rotationY, rotationZ)
+      orbitGeometries.push(geometry)
+      orbitGroup.add(ring)
+    }
+
+    addOrbit(sphereRadius * 1.035, 0.18, 0.08, 0)
+    addOrbit(sphereRadius * 1.055, 0.92, 0.28, 0.34)
+    addOrbit(sphereRadius * 1.02, -0.78, -0.22, -0.48)
+    scene.add(orbitGroup)
 
     // Централно златно сияние
-    const centerGlow = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: glowTexture, color: 0xc8a05e, transparent: true, opacity: 0.16, depthWrite: false })
-    )
-    centerGlow.scale.set(sphereRadius * 0.85, sphereRadius * 0.85, 1)
+    const centerGlowMaterial = new THREE.SpriteMaterial({
+      map: glowTexture,
+      color: 0xc8a05e,
+      transparent: true,
+      opacity: isMobile ? 0.2 : 0.16,
+      depthWrite: false,
+    })
+    const centerGlow = new THREE.Sprite(centerGlowMaterial)
+    const centerGlowSize = sphereRadius * (isMobile ? 1.25 : 0.95)
+    centerGlow.scale.set(centerGlowSize, centerGlowSize, 1)
     scene.add(centerGlow)
 
     // Етикети
@@ -220,7 +271,13 @@ export default function ProcedureSphere() {
       for (const t of twinkles) {
         t.mat.opacity = t.base + 0.35 * Math.sin(elapsed * t.speed + t.phase)
       }
-      centerGlow.material.opacity = 0.13 + 0.05 * Math.sin(elapsed * 0.8)
+      centerGlow.material.opacity = (isMobile ? 0.18 : 0.13) + 0.05 * Math.sin(elapsed * 0.8)
+      if (!prefersReduced) {
+        shell.rotation.y += dt * 0.035
+        shell.rotation.x += dt * 0.012
+        orbitGroup.rotation.y -= dt * 0.045
+        orbitGroup.rotation.z += dt * 0.012
+      }
 
       // Тези стойности са еднакви за всички етикети в кадъра — изчисляваме
       // ги веднъж, вместо по 30 пъти на frame.
@@ -256,10 +313,10 @@ export default function ProcedureSphere() {
         let progress = (dist - minDist) / (maxDist - minDist)
         progress = Math.min(Math.max(progress, 0), 1)
 
-        // На телефон показваме само най-предните 5–8 процедури. Така те могат
+        // На телефон показваме само най-предните процедури. Така те могат
         // да са реално четими и удобни за натискане, без 30 големи етикета да
         // се застъпват. Останалите се появяват естествено при завъртане.
-        if (isMobile && progress > 0.84 && !isActive) {
+        if (isMobile && progress > 0.88 && !isActive) {
           label.element.style.display = 'none'
           label.element.style.pointerEvents = 'none'
           return
@@ -270,8 +327,8 @@ export default function ProcedureSphere() {
         // 30-те етикета много нагъсто, затова оставяме ясни само предните, а
         // претрупаният външен пръстен се стапя, вместо да се застъпва/отрязва.
         let opacity = 1
-        const fadeStart = isMobile ? 0.52 : 0.85
-        const fadeAmount = isMobile ? 0.95 : 0.35
+        const fadeStart = isMobile ? 0.58 : 0.85
+        const fadeAmount = isMobile ? 0.82 : 0.35
         if (progress > fadeStart) {
           opacity = 1 - ((progress - fadeStart) / (1 - fadeStart)) * fadeAmount
         }
@@ -345,6 +402,12 @@ export default function ProcedureSphere() {
       stopAnimation()
       controls.dispose()
       glRenderer.dispose()
+      twinkles.forEach(t => t.mat.dispose())
+      shellGeometry.dispose()
+      shellMaterial.dispose()
+      orbitGeometries.forEach(geometry => geometry.dispose())
+      orbitMaterial.dispose()
+      centerGlowMaterial.dispose()
       glowTexture.dispose()
       if (container.contains(glRenderer.domElement)) container.removeChild(glRenderer.domElement)
       if (container.contains(cssRenderer.domElement)) container.removeChild(cssRenderer.domElement)
