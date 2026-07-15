@@ -214,10 +214,10 @@ export default function ProcedureSphere() {
         let progress = (dist - minDist) / (maxDist - minDist)
         progress = Math.min(Math.max(progress, 0), 1)
 
-        // Цялата предна полусфера е четима; към хоризонта етикетите
-        // избледняват и се скриват — без полупрозрачни призраци отзад
+        // Предната полусфера остава ясно четима. Към самия ръб етикетите леко
+        // избледняват, но пазят четим минимум (~0.65), за да не се губят на фона.
         let opacity = 1
-        if (progress > 0.7) opacity = 1 - (progress - 0.7) / 0.3
+        if (progress > 0.85) opacity = 1 - ((progress - 0.85) / 0.15) * 0.35
         if (isActive) opacity = Math.max(opacity, 1)
 
         if (opacity <= 0.02) {
@@ -226,7 +226,7 @@ export default function ProcedureSphere() {
         } else {
           label.element.style.display = 'inline-flex'
           label.element.style.opacity = opacity.toFixed(2)
-          label.element.style.pointerEvents = progress > 0.75 && !isActive ? 'none' : 'auto'
+          label.element.style.pointerEvents = progress > 0.9 && !isActive ? 'none' : 'auto'
         }
       })
 
