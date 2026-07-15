@@ -105,8 +105,7 @@ export default function ProcedureSection() {
     <section
       id="procedures"
       ref={sectionRef}
-      className="relative z-10"
-      style={{ padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)' }}
+      className="procedure-section relative z-10"
     >
       <div className="max-w-6xl mx-auto">
         <div

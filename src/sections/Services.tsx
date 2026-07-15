@@ -39,9 +39,8 @@ export default function Services() {
     <section
       id="services"
       ref={sectionRef}
-      className="relative z-10"
+      className="services-section relative z-10"
       style={{
-        padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)',
         background: 'linear-gradient(180deg, transparent 0%, rgba(200,160,94,0.03) 40%, transparent 100%)',
       }}
     >

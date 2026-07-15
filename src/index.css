@@ -128,6 +128,11 @@
     height: min(80svh, 800px);
   }
 
+  .procedure-section,
+  .services-section {
+    padding: clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem);
+  }
+
   .label-tag {
     display: inline-flex;
     align-items: center;
@@ -413,6 +418,15 @@
 }
 
 @media (max-width: 768px) {
+  /* Между процедурите и услугите не натрупваме два пълни section padding-а. */
+  .procedure-section {
+    padding-bottom: 1.25rem;
+  }
+
+  .services-section {
+    padding-top: 2.75rem;
+  }
+
   /* Сферата използва цялата ширина на телефона, включително секционния
      padding. Стабилната височина не оставя голямо празно поле около нея. */
   .procedure-sphere {
