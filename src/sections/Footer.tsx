@@ -1,11 +1,13 @@
 import { ArrowUp, Instagram, Facebook } from 'lucide-react'
 import { Link, useNavigate, useLocation } from 'react-router'
 import { scrollToPosition, scrollToTarget } from '../lib/scroll'
+import { openConsentBanner } from '../lib/consent'
 
 const QUICK_LINKS = [
   { label: 'Начало', href: '#hero' },
   { label: 'Процедури', href: '#procedures' },
   { label: 'Услуги', href: '#services' },
+  { label: 'За нас', href: '#about' },
   { label: 'Апаратура', href: '#equipment' },
   { label: 'Контакти', href: '#contact' },
 ]
@@ -41,7 +43,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               {[
                 { icon: Instagram, name: 'Instagram', href: 'https://www.instagram.com/drdiclinic/' },
-                { icon: Facebook, name: 'Facebook', href: 'http://www.facebook.com/DrDiClinic/' },
+                { icon: Facebook, name: 'Facebook', href: 'https://www.facebook.com/DrDiClinic/' },
               ].map(s => (
                 <a
                   key={s.name}
@@ -84,9 +86,14 @@ export default function Footer() {
             <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82] py-1" style={{ color: 'rgba(242,237,226,0.7)' }}>
               Политика за лични данни
             </Link>
-            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82] py-1" style={{ color: 'rgba(242,237,226,0.7)' }}>
-              GDPR
-            </Link>
+            <button
+              type="button"
+              onClick={openConsentBanner}
+              className="text-xs tracking-[0.12em] cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] py-1 text-center md:text-left"
+              style={{ color: 'rgba(242,237,226,0.7)' }}
+            >
+              Настройки на бисквитките
+            </button>
           </div>
 
           {/* Обратно към началото */}
@@ -101,7 +108,7 @@ export default function Footer() {
         </div>
 
         <p className="mt-12 text-center md:text-left text-[11px] tracking-wider" style={{ color: 'rgba(242,237,226,0.5)' }}>
-          © 2026 Dr. Di Clinic. Всички права запазени.
+          © {new Date().getFullYear()} Dr. Di Clinic. Всички права запазени.
         </p>
       </div>
     </footer>

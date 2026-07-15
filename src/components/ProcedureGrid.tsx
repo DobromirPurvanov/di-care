@@ -29,6 +29,7 @@ function DetailBody({ active, onClose }: { active: Procedure; onClose: () => voi
       <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1">
         <Link
           to={`/uslugi/${category.slug}`}
+          state={{ procedure: active.title }}
           className="inline-flex items-center gap-2 min-h-[44px] text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#ddbd82]"
           style={{ color: '#c8a05e' }}
         >

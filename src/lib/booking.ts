@@ -1,11 +1,18 @@
 // Централна конфигурация за системата за запазване на часове (Cal.com).
 //
 // Реалният линк се задава чрез env променлива VITE_CAL_LINK във Vercel
-// (и локално в .env.local). До създаване на акаунт се ползва placeholder,
-// така че бутоните са видимо активни.
+// (и локално в .env.local).
 //
-// Ползваме официалния vanilla embed snippet (зареден динамично), вместо
-// npm пакета — така Cal не влиза в bundle-а и не утежнява build-а.
+// ВНИМАНИЕ: fallback стойността по-долу е ВРЕМЕНЕН тестов календар
+// (личен акаунт, 30-мин "Cal Video" среща). Преди публикуване създайте
+// Cal.com акаунт на клиниката с ПРИСЪСТВЕН event (адресът на клиниката,
+// не видео разговор) и задайте VITE_CAL_LINK.
+//
+// GDPR: embed скриптът на Cal НЕ се зарежда при отваряне на сайта, освен
+// ако потребителят е приел всички бисквитки. При „само необходимите" се
+// зарежда чак при изрично натискане на „Запази час" (изрично поискана
+// услуга). Ползваме официалния vanilla embed snippet (зареден динамично),
+// вместо npm пакета — така Cal не влиза в bundle-а.
 
 export const CAL_LINK: string = import.meta.env.VITE_CAL_LINK ?? 'dobromir-purvanov-ksto97/30min'
 
@@ -23,16 +30,6 @@ export const CAL_UI_CONFIG = {
   },
 }
 
-/**
- * Config за конкретен клик (data-cal-config). Пренася избраната услуга в
- * бележките към резервацията, за да я вижда клиниката.
- */
-export function calConfig(service?: string): string {
-  const config: Record<string, string> = { theme: 'dark' }
-  if (service) config.notes = `Услуга: ${service}`
-  return JSON.stringify(config)
-}
-
 interface CalApi {
   (...args: unknown[]): void
   q?: unknown[][]
@@ -46,15 +43,21 @@ declare global {
   }
 }
 
-let started = false
+let scriptRequested = false
+let scriptFailed = false
+
+/** true, ако embed скриптът не можа да се зареди (блокер/офлайн). */
+export function isCalUnavailable(): boolean {
+  return scriptFailed
+}
 
 /**
- * Зарежда Cal.com embed скрипта, инициализира темата и закача callbacks за
- * отваряне/затваряне на popup модала (за спиране на фоновия скрол).
+ * Зарежда Cal.com embed скрипта и инициализира namespace-а + темата.
+ * Идемпотентно — безопасно да се вика при всеки клик.
  */
-export function initCal(handlers: { onOpen: () => void; onClose: () => void }): void {
-  if (started || typeof window === 'undefined') return
-  started = true
+export function loadCalScript(): void {
+  if (scriptRequested || typeof window === 'undefined') return
+  scriptRequested = true
 
   const w = window
   const scriptSrc = 'https://app.cal.com/embed/embed.js'
@@ -68,7 +71,12 @@ export function initCal(handlers: { onOpen: () => void; onClose: () => void }): 
       if (!cal.loaded) {
         cal.ns = {}
         cal.q = cal.q || []
-        w.document.head.appendChild(w.document.createElement('script')).src = scriptSrc
+        const script = w.document.createElement('script')
+        script.src = scriptSrc
+        // Ако скриптът не се зареди (adblock, офлайн), бутоните за час
+        // превключват към резервната пътека (контактната форма).
+        script.onerror = () => { scriptFailed = true }
+        w.document.head.appendChild(script)
         cal.loaded = true
       }
       if (args[0] === 'init') {
@@ -88,24 +96,41 @@ export function initCal(handlers: { onOpen: () => void; onClose: () => void }): 
     } as CalApi)
 
   w.Cal('init', CAL_NAMESPACE, { origin: 'https://cal.com' })
-  const ns = w.Cal.ns![CAL_NAMESPACE]
-  ns('ui', CAL_UI_CONFIG)
+  w.Cal.ns![CAL_NAMESPACE]('ui', CAL_UI_CONFIG)
+}
 
-  // Откриваме отваряне/затваряне на popup-а чрез самия модал, а не чрез Cal
-  // callbacks. Cal НЕ вдига надеждно събитие при затваряне през X / фон / Esc
-  // (само скрива <cal-modal-box> с visibility:hidden). Ако разчитаме на
-  // събитието, Lenis остава спрян и страницата „замръзва" — точно бъгът, при
-  // който „Запази час" крашва, ако не продължиш с резервацията.
-  watchCalModal(handlers)
+/**
+ * Отваря booking popup-а програмно. Инструкцията се нарежда в опашката на
+ * embed-а, така че работи и при първия клик, докато скриптът още се тегли.
+ * Връща false, ако Cal е недостъпен — тогава извикващият показва fallback.
+ */
+export function openBooking(service?: string): boolean {
+  if (typeof window === 'undefined') return false
+  loadCalScript()
+  if (scriptFailed) return false
+
+  const config: Record<string, string> = { theme: 'dark' }
+  if (service) config.notes = `Услуга: ${service}`
+
+  const ns = window.Cal?.ns?.[CAL_NAMESPACE]
+  if (!ns) return false
+  ns('modal', { calLink: CAL_LINK, config })
+  return true
 }
 
 /**
  * Следи видимостта на Cal модала и вика onOpen/onClose при реална промяна.
- * Понеся всички пътища на затваряне (бутон X, клик на фона, Esc, успешна
- * резервация), защото гледа крайното състояние на DOM, а не Cal събития.
+ * Гледа крайното състояние на DOM (не Cal събития), защото Cal НЕ вдига
+ * надеждно събитие при затваряне през X / фон / Esc — само скрива
+ * <cal-modal-box> с visibility:hidden. Ако разчитаме на събитието, Lenis
+ * остава спрян и страницата „замръзва".
+ *
+ * Не зарежда нищо от трети страни — безопасно се стартира винаги.
  */
-function watchCalModal(handlers: { onOpen: () => void; onClose: () => void }): void {
-  if (typeof window === 'undefined' || typeof MutationObserver === 'undefined') return
+export function watchCalModal(handlers: { onOpen: () => void; onClose: () => void }): () => void {
+  if (typeof window === 'undefined' || typeof MutationObserver === 'undefined') {
+    return () => {}
+  }
 
   let open = false
   let modalObserver: MutationObserver | null = null
@@ -131,4 +156,9 @@ function watchCalModal(handlers: { onOpen: () => void; onClose: () => void }): v
     evaluate()
   })
   bodyObserver.observe(document.body, { childList: true })
+
+  return () => {
+    bodyObserver.disconnect()
+    modalObserver?.disconnect()
+  }
 }

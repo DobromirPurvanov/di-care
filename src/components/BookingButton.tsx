@@ -1,5 +1,7 @@
 import type { ReactNode, CSSProperties, MouseEventHandler } from 'react'
-import { CAL_LINK, CAL_NAMESPACE, calConfig } from '../lib/booking'
+import { useLocation, useNavigate } from 'react-router'
+import { openBooking } from '../lib/booking'
+import { scrollToTarget } from '../lib/scroll'
 
 type Variant = 'primary' | 'ghost' | 'link'
 
@@ -12,8 +14,7 @@ interface Props {
   style?: CSSProperties
   children: ReactNode
   'aria-label'?: string
-  /** Допълнителен клик (напр. за затваряне на мобилното меню). Cal popup-ът
-      се отваря независимо чрез data-cal-link. */
+  /** Допълнителен клик (напр. за затваряне на мобилното меню). */
   onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
@@ -26,8 +27,10 @@ const VARIANT: Record<Variant, string> = {
 }
 
 /**
- * Отваря Cal.com popup при клик (Cal хваща кликовете върху [data-cal-link]
- * след инициализация в App). Един компонент за всички „Запази час" места.
+ * Отваря Cal.com popup при клик. Скриптът на Cal се зарежда чак при първия
+ * клик (освен ако потребителят е приел всички бисквитки — тогава е зареден
+ * предварително от App). Ако Cal е недостъпен (блокер/офлайн), водим
+ * потребителя към контактната форма като резервен път.
  */
 export default function BookingButton({
   service,
@@ -35,14 +38,26 @@ export default function BookingButton({
   className = '',
   style,
   children,
+  onClick,
   ...rest
 }: Props) {
+  const navigate = useNavigate()
+  const onHome = useLocation().pathname === '/'
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    onClick?.(e)
+    const opened = openBooking(service)
+    if (!opened) {
+      // Резервен път: контактната форма (телефон + съобщение).
+      if (onHome) scrollToTarget('#contact')
+      else navigate('/', { state: { scrollTo: '#contact' } })
+    }
+  }
+
   return (
     <button
       type="button"
-      data-cal-namespace={CAL_NAMESPACE}
-      data-cal-link={CAL_LINK}
-      data-cal-config={calConfig(service)}
+      onClick={handleClick}
       className={`items-center justify-center gap-2 rounded-full transition-all duration-300 cursor-pointer ${VARIANT[variant]} ${className}`}
       style={style}
       {...rest}

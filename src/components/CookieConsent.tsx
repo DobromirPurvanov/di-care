@@ -1,45 +1,41 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { Cookie } from 'lucide-react'
-
-const STORAGE_KEY = 'dicare-cookie-consent'
-type Consent = 'all' | 'essential'
-
-/** Прочита запазения избор (ако има) — извън компонента, за да не мига банерът. */
-function storedConsent(): Consent | null {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY)
-    return v === 'all' || v === 'essential' ? v : null
-  } catch {
-    return null
-  }
-}
+import { getConsent, onConsentBannerOpen, setConsent, type Consent } from '../lib/consent'
 
 /**
- * Ненатрапчив банер за съгласие с бисквитки — показва се само при първо
- * посещение (или докато не е направен избор) и запазва решението локално.
+ * Банер за съгласие с бисквитки — показва се при първо посещение (или отново
+ * през „Настройки на бисквитките" във футъра). Изборът реално управлява
+ * зареждането на вградените услуги (Cal.com календар, Google Maps) — вижте
+ * src/lib/consent.ts.
  */
 export default function CookieConsent() {
-  const [open, setOpen] = useState(false)
+  // Лениво начално състояние — без setState в effect и без мигане на банера.
+  const [open, setOpen] = useState(() => !getConsent())
   const [shown, setShown] = useState(false) // управлява входящата анимация
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Входяща анимация: изчакваме кадър, за да се задейства transition-ът.
   useEffect(() => {
-    if (storedConsent()) return
-    setOpen(true)
-    // Изчакваме кадър, за да се задейства transition-ът при появяване.
+    if (!open) return
     const id = requestAnimationFrame(() => setShown(true))
     return () => cancelAnimationFrame(id)
+  }, [open])
+
+  // Повторно отваряне от „Настройки на бисквитките" (GDPR: оттегляне/промяна).
+  useEffect(() => {
+    const off = onConsentBannerOpen(() => {
+      if (closeTimer.current) clearTimeout(closeTimer.current)
+      setOpen(true)
+    })
+    return off
   }, [])
 
   function choose(value: Consent) {
-    try {
-      localStorage.setItem(STORAGE_KEY, value)
-    } catch {
-      /* localStorage може да е недостъпен — банерът просто се скрива за сесията */
-    }
+    setConsent(value)
     setShown(false)
     // Изчакваме изходящата анимация, преди да демонтираме.
-    setTimeout(() => setOpen(false), 400)
+    closeTimer.current = setTimeout(() => setOpen(false), 400)
   }
 
   if (!open) return null
@@ -48,6 +44,7 @@ export default function CookieConsent() {
     <div
       role="region"
       aria-label="Съгласие за бисквитки"
+      // z-index: под мобилното меню (вж. скалата в Header.tsx), над съдържанието.
       className="fixed inset-x-0 bottom-0 z-[1000] flex justify-center px-4 pointer-events-none"
       style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))', paddingTop: '0.5rem' }}
     >
@@ -69,8 +66,9 @@ export default function CookieConsent() {
         <div className="flex items-start gap-3.5 min-w-0">
           <Cookie size={20} className="flex-none mt-[2px]" style={{ color: 'var(--accent-light)' }} aria-hidden="true" />
           <p className="text-[13px] leading-relaxed" style={{ color: 'rgba(242,237,226,0.75)' }}>
-            Използваме бисквитки за коректната работа на сайта и за вградени услуги
-            (календар за резервации и карта). Вижте{' '}
+            Използваме бисквитки за коректната работа на сайта. Вградените услуги
+            (календар за резервации и карта) се зареждат само със съгласие или когато
+            изрично ги използвате. Вижте{' '}
             <Link
               to="/poveritelnost"
               className="underline underline-offset-2 transition-colors hover:text-[#ddbd82]"

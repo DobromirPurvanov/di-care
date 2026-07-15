@@ -44,13 +44,19 @@ export default function Equipment() {
   const titleRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>('.eq-card')
+      if (reduced) {
+        gsap.set([titleRef.current, ...cards], { opacity: 1, x: 0, y: 0 })
+        return
+      }
       gsap.to(titleRef.current, {
         opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
       })
       // Редуващ се stagger: нечетните идват отляво, четните отдясно
-      gsap.utils.toArray<HTMLElement>('.eq-card').forEach((el, i) => {
+      cards.forEach((el, i) => {
         gsap.fromTo(el,
           { opacity: 0, x: i % 2 === 0 ? -44 : 44, y: 20 },
           {
@@ -76,7 +82,7 @@ export default function Equipment() {
       <div className="max-w-6xl mx-auto">
         <h2
           ref={titleRef}
-          className="text-center font-extralight uppercase tracking-[0.15em] opacity-0 mb-4"
+          className="text-center font-light uppercase tracking-[0.15em] opacity-0 mb-4"
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', transform: 'translateY(40px)' }}
         >
           Апаратура

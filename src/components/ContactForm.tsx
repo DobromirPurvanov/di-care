@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { Check, Loader2, AlertCircle } from 'lucide-react'
 import { categories } from '../data/procedures'
+import { scrollToTarget } from '../lib/scroll'
 
 type Values = {
   name: string
@@ -92,8 +93,15 @@ export default function ContactForm() {
     setErrors(all)
 
     if (Object.keys(all).length > 0) {
-      const first = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')
-      first?.focus()
+      // aria-invalid се появява в DOM чак след re-render — затова търсим в
+      // следващия кадър. preventScroll: голият focus() скролва нативно и се
+      // бие с Lenis; позиционираме през scrollToTarget.
+      requestAnimationFrame(() => {
+        const first = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')
+        if (!first) return
+        first.focus({ preventScroll: true })
+        scrollToTarget(first, -120)
+      })
       return
     }
 
@@ -101,13 +109,28 @@ export default function ContactForm() {
     // Полето вече показва фиксиран префикс +359; ако потребителят е въвел и
     // свой префикс (+359 / 00359 / водеща 0), го премахваме, за да не се дублира.
     const localPhone = values.phone.trim().replace(/^(\+?359|0)\s*/, '')
-    const payload = { ...values, phone: `+359 ${localPhone}`, company: undefined }
+    const payload = {
+      name: values.name.trim(),
+      phone: `+359 ${localPhone}`,
+      email: values.email.trim(),
+      procedure: values.procedure,
+      message: values.message.trim(),
+      company: values.company,
+    }
     try {
-      // TODO: заменете mock-а с реален endpoint (Vercel Serverless / Resend / Formspree).
-      // const res = await fetch('/api/contact', { method: 'POST', body: JSON.stringify(payload) })
-      // if (!res.ok) throw new Error('bad status')
-      await new Promise(r => setTimeout(r, 900))
-      console.log('[ContactForm] Заявка за час:', payload)
+      // В dev няма Vercel functions — симулираме успех, за да е тестваем UI-ят.
+      if (import.meta.env.DEV) {
+        await new Promise(r => setTimeout(r, 700))
+        console.info('[ContactForm] DEV режим — заявката НЕ се изпраща:', payload)
+        setStatus('success')
+        return
+      }
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error(`status ${res.status}`)
       setStatus('success')
     } catch {
       setStatus('error')
@@ -287,7 +310,7 @@ export default function ContactForm() {
           />
           <span
             aria-hidden="true"
-            className="mt-[2px] w-[18px] h-[18px] flex-none flex items-center justify-center transition-all duration-200"
+            className="gdpr-box mt-[2px] w-[18px] h-[18px] flex-none flex items-center justify-center transition-all duration-200"
             style={{
               border: `1px solid ${values.gdpr ? '#c8a05e' : touched.gdpr && errors.gdpr ? '#e07a6a' : 'rgba(242,237,226,0.25)'}`,
               background: values.gdpr ? 'rgba(200,160,94,0.15)' : 'transparent',

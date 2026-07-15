@@ -14,12 +14,18 @@ export default function Services() {
   const titleRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>('.svc-card')
+      if (reduced) {
+        gsap.set([titleRef.current, ...cards], { opacity: 1, y: 0 })
+        return
+      }
       gsap.to(titleRef.current, {
         opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
       })
-      gsap.utils.toArray<HTMLElement>('.svc-card').forEach((el, i) => {
+      cards.forEach((el, i) => {
         gsap.to(el, {
           opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: (i % 3) * 0.12,
           scrollTrigger: { trigger: el, start: 'top 88%' },
@@ -42,7 +48,7 @@ export default function Services() {
       <div className="max-w-6xl mx-auto">
         <h2
           ref={titleRef}
-          className="text-center font-extralight uppercase tracking-[0.15em] opacity-0 mb-16"
+          className="text-center font-light uppercase tracking-[0.15em] opacity-0 mb-16"
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', transform: 'translateY(40px)' }}
         >
           Нашите услуги
@@ -87,7 +93,7 @@ export default function Services() {
                   className="absolute top-5 right-6 z-10 text-[11px] tabular-nums tracking-[0.1em]"
                   style={{ color: 'var(--text-muted)' }}
                 >
-                  {count} процедури
+                  {count} {count === 1 ? 'процедура' : 'процедури'}
                 </span>
 
                 <div className="relative z-10 h-full flex flex-col justify-end p-6" style={{ minHeight: '260px' }}>

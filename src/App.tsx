@@ -12,18 +12,21 @@ import Home from './pages/Home'
 import ServicePage from './pages/ServicePage'
 import Privacy from './pages/Privacy'
 import { getLenis, setLenis } from './lib/scroll'
-import { initCal } from './lib/booking'
+import { loadCalScript, watchCalModal } from './lib/booking'
+import { getConsent, onConsentChange } from './lib/consent'
 
 gsap.registerPlugin(ScrollTrigger)
 
 // Code-splitting за тежкия WebGL фон
 const ShaderBackground = lazy(() => import('./components/ShaderBackground'))
 
-/** Връща скрола в началото при смяна на маршрут (освен ако не е поискан scrollTo). */
+/** Връща скрола в началото при смяна на маршрут (освен ако не е поискан
+    scrollTo, или ServicePage сам ще позиционира към конкретна процедура). */
 function ScrollToTop() {
   const { pathname, state } = useLocation()
   useEffect(() => {
-    if ((state as { scrollTo?: string } | null)?.scrollTo) return
+    const s = state as { scrollTo?: string; procedure?: string } | null
+    if (s?.scrollTo || s?.procedure) return
     // Изчакваме новото съдържание да се монтира, после нулираме скрола —
     // иначе Lenis клампва към старата (по-голяма) височина на страницата.
     const id = requestAnimationFrame(() => {
@@ -63,12 +66,25 @@ export default function App() {
     }
   }, [])
 
-  // Cal.com — тема на календара + спиране на фоновия скрол докато popup-ът е отворен
+  // Cal.com: watcher-ът на модала (спира фоновия скрол, докато popup-ът е
+  // отворен) не зарежда трети страни и тръгва винаги. Самият embed скрипт се
+  // зарежда предварително САМО при прието съгласие за всички бисквитки —
+  // иначе се тегли чак при изричен клик на „Запази час" (в BookingButton).
   useEffect(() => {
-    initCal({
+    const stopWatching = watchCalModal({
       onOpen: () => getLenis()?.stop(),
       onClose: () => getLenis()?.start(),
     })
+
+    if (getConsent() === 'all') loadCalScript()
+    const offConsent = onConsentChange(value => {
+      if (value === 'all') loadCalScript()
+    })
+
+    return () => {
+      stopWatching()
+      offConsent()
+    }
   }, [])
 
   return (

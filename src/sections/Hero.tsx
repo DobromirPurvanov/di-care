@@ -25,7 +25,18 @@ export default function Hero() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: reduced ? 0 : 1.3 }) // след loading screen-а
+      // При reduced-motion всичко се показва веднага, без движение.
+      if (reduced) {
+        const targets = [
+          line1Ref.current, line2Ref.current, charsWrapRef.current,
+          brandsRef.current, scrollHintRef.current,
+          ...(brandsRef.current ? Array.from(brandsRef.current.querySelectorAll('.brand-item')) : []),
+        ]
+        gsap.set(targets, { opacity: 1, y: 0 })
+        return
+      }
+
+      const tl = gsap.timeline({ delay: 1.3 }) // след loading screen-а
 
       tl.to(line1Ref.current, { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, 0)
         .to(line2Ref.current, { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, 0.2)
@@ -33,7 +44,7 @@ export default function Hero() {
       // Разкриване на акцентния ред (единичен елемент — надежден gradient рендер)
       tl.to(charsWrapRef.current, {
         opacity: 1, y: 0,
-        duration: reduced ? 0.01 : 1,
+        duration: 1,
         ease: 'power3.out',
       }, 0.5)
 

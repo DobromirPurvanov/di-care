@@ -7,9 +7,17 @@ import WhyUs from '../sections/WhyUs'
 import Equipment from '../sections/Equipment'
 import Contact from '../sections/Contact'
 import { scrollToTarget } from '../lib/scroll'
+import { usePageMeta } from '../lib/seo'
 
 export default function Home() {
   const location = useLocation()
+
+  usePageMeta({
+    title: 'Dr. Di Clinic | Клиника за естетика и красота',
+    description:
+      'Dr. Di Clinic е клиника за естетика и красота във Варна. Лазерно подмладяване, дермални филъри, ботокс, IV терапии и още.',
+    path: '/',
+  })
 
   // Когато идваме от подстраница с искане за скрол към котва (напр. #contact),
   // изчакваме секциите да се монтират и скролваме плавно.

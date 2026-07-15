@@ -1,22 +1,62 @@
-import { useParams, Link, Navigate } from 'react-router'
+import { useEffect } from 'react'
+import { useParams, useLocation, Link, Navigate } from 'react-router'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { categories, procedures } from '../data/procedures'
 import { serviceContent, clinicPhilosophy } from '../data/services'
 import BookingButton from '../components/BookingButton'
-import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { usePageMeta } from '../lib/seo'
+import { getLenis, scrollToTarget } from '../lib/scroll'
 
 export default function ServicePage() {
   const { slug } = useParams()
+  const { state } = useLocation()
   const category = categories.find((c) => c.slug === slug)
+  const content = category ? serviceContent[category.id] : null
 
-  // Заглавието трябва да е стабилно между render-ите (hook правилата не
-  // допускат условно извикване след ранния return по-долу).
-  useDocumentTitle(category ? `${category.label} | Dr. Di Clinic` : 'Dr. Di Clinic')
+  // Hook-овете стоят преди ранния return (правилата на React hooks).
+  usePageMeta({
+    title: category ? `${category.label} | Dr. Di Clinic` : 'Dr. Di Clinic',
+    description: content
+      ? `${content.tagline}. ${content.intro}`.slice(0, 158)
+      : 'Клиника за естетика и красота във Варна.',
+    path: category ? `/uslugi/${category.slug}` : '/',
+  })
+
+  // Ако идваме от клик върху конкретна процедура (3D сферата / списъка),
+  // скролваме до нея и я маркираме за момент — иначе потребителят каца на
+  // върха на категорията и трябва сам да я търси.
+  //
+  // Целият sequence (нулиране на пренесения скрол → плавно към процедурата)
+  // живее тук: ScrollToTop в App нарочно пропуска този случай, защото неговият
+  // отложен reset се състезаваше с anchor скрола и го убиваше при бавни кадри
+  // (unmount на Three.js сцената).
+  const targetProcedure = (state as { procedure?: string } | null)?.procedure
+  useEffect(() => {
+    if (!targetProcedure) return
+    const lenis = getLenis()
+    lenis?.resize()
+    lenis?.scrollTo(0, { immediate: true, force: true })
+    window.scrollTo(0, 0)
+
+    let clearHighlight: ReturnType<typeof setTimeout> | undefined
+    const raf = requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>(
+        `li[data-proc="${CSS.escape(targetProcedure)}"]`
+      )
+      if (!el) return
+      scrollToTarget(el, -110)
+      el.classList.add('proc-highlight')
+      clearHighlight = setTimeout(() => el.classList.remove('proc-highlight'), 2600)
+    })
+    return () => {
+      cancelAnimationFrame(raf)
+      if (clearHighlight) clearTimeout(clearHighlight)
+    }
+  }, [targetProcedure, slug])
 
   // Непозната услуга → обратно към началото.
-  if (!category) return <Navigate to="/" replace />
+  if (!category || !content) return <Navigate to="/" replace />
 
-  const content = serviceContent[category.id]
   const items = procedures.filter((p) => p.category === category.id)
   const extras = new Map((content.extras ?? []).map((e) => [e.match, e]))
 
@@ -90,6 +130,7 @@ export default function ServicePage() {
                 return (
                   <li
                     key={p.title}
+                    data-proc={p.title}
                     className="py-7"
                     style={{ borderBottom: i === items.length - 1 ? 'none' : '1px solid var(--border)' }}
                   >

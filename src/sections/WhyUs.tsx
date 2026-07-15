@@ -45,17 +45,22 @@ export default function WhyUs() {
   const cardsRef = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
+    // Без анимация при reduced-motion — картите просто са си видими.
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) return
+    const cards = cardsRef.current.filter(Boolean)
+    if (reduced || cards.length === 0) return
 
+    // Началното скрито състояние се задава от JS (не в markup-а), така че при
+    // проблем с ScrollTrigger съдържанието никога не остава трайно невидимо.
+    // Per-card trigger като в Services/Equipment — груповият trigger със
+    // gsap.from не изиграваше анимацията и секцията оставаше празна.
     const ctx = gsap.context(() => {
-      gsap.from(cardsRef.current, {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        ease: 'power2.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 68%' },
+      gsap.set(cards, { opacity: 0, y: 30 })
+      cards.forEach((el, i) => {
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', delay: (i % 3) * 0.08,
+          scrollTrigger: { trigger: el, start: 'top 90%' },
+        })
       })
     }, sectionRef)
 

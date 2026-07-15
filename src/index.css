@@ -9,7 +9,7 @@
     --bg-card: #14231f;
     --text: #f2ede2;
     --text-secondary: rgba(242,237,226,0.74);
-    --text-muted: rgba(242,237,226,0.5);
+    --text-muted: rgba(242,237,226,0.55);
     --accent: #c8a05e;
     --accent-light: #ddbd82;
     --accent-glow: rgba(200,160,94,0.3);
@@ -35,21 +35,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-  }
-
-  /* Custom cursor — само на прецизен pointer */
-  @media (pointer: fine) {
-    body.has-custom-cursor,
-    body.has-custom-cursor a,
-    body.has-custom-cursor button,
-    body.has-custom-cursor [role="button"] {
-      cursor: none;
-    }
-    body.has-custom-cursor input,
-    body.has-custom-cursor textarea,
-    body.has-custom-cursor select {
-      cursor: auto;
-    }
   }
 
   ::selection {
@@ -182,7 +167,8 @@
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(200,160,94,0.7);
+    /* ≥4.5:1 контраст върху тъмния фон */
+    color: rgba(221,189,130,0.9);
     border-radius: 999px;
     transition: color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
   }
@@ -270,7 +256,8 @@
     top: 22px;
     font-size: 14px;
     letter-spacing: 0.04em;
-    color: rgba(242,237,226,0.4);
+    /* ≥4.5:1 контраст (0.4 беше ~3.6:1) */
+    color: rgba(242,237,226,0.6);
     pointer-events: none;
     transition: top 0.25s ease, font-size 0.25s ease, color 0.25s ease, letter-spacing 0.25s ease;
   }
@@ -298,7 +285,27 @@
     margin-top: 6px;
     font-size: 11px;
     letter-spacing: 0.03em;
-    color: rgba(242, 237, 226, 0.42);
+    /* ≥4.5:1 контраст (0.42 беше ~3.8:1) */
+    color: rgba(242, 237, 226, 0.58);
+  }
+
+  /* Видим фокус ринг за GDPR чекбокса (sr-only input-ът клипва глобалния) */
+  input:focus-visible + .gdpr-box {
+    outline: 2px solid rgba(200,160,94,0.75);
+    outline-offset: 3px;
+  }
+
+  /* Подсветка на процедура при директен клик от сферата/списъка */
+  .proc-highlight {
+    animation: procHighlight 2.4s ease;
+    border-radius: 12px;
+  }
+
+  @keyframes procHighlight {
+    0% { box-shadow: 0 0 0 0 rgba(200,160,94,0); background: rgba(200,160,94,0); }
+    18% { box-shadow: 0 0 0 1px rgba(200,160,94,0.55), 0 0 34px rgba(200,160,94,0.18); background: rgba(200,160,94,0.07); }
+    70% { box-shadow: 0 0 0 1px rgba(200,160,94,0.35), 0 0 24px rgba(200,160,94,0.1); background: rgba(200,160,94,0.05); }
+    100% { box-shadow: 0 0 0 0 rgba(200,160,94,0); background: rgba(200,160,94,0); }
   }
 
   select.field-input {

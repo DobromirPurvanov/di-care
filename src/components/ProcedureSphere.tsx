@@ -111,9 +111,12 @@ export default function ProcedureSphere() {
     // Етикети
     const labels: { obj: CSS3DObject; element: HTMLDivElement; target: THREE.Vector3 }[] = []
 
-    // Клик върху етикет → директно към страницата на съответната услуга.
+    // Клик върху етикет → страницата на услугата, позиционирана на
+    // конкретната процедура (ServicePage скролва и я маркира).
     function goToService(data: Procedure) {
-      navigateRef.current(`/uslugi/${categoryById[data.category].slug}`)
+      navigateRef.current(`/uslugi/${categoryById[data.category].slug}`, {
+        state: { procedure: data.title },
+      })
     }
 
     function addLabel(data: Procedure) {

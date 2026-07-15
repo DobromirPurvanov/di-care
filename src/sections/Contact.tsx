@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, CalendarClock, ArrowRight } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Instagram, Facebook, CalendarClock, ArrowRight, ExternalLink } from 'lucide-react'
 import ContactForm from '../components/ContactForm'
 import BookingButton from '../components/BookingButton'
+import { getConsent, onConsentChange } from '../lib/consent'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const MAPS_EMBED =
-  'https://www.google.com/maps?q=' +
-  encodeURIComponent('ул. Любен Каравелов 71, Варна, България') +
-  '&output=embed&hl=bg&z=16'
+const MAPS_QUERY = encodeURIComponent('ул. Любен Каравелов 71, Варна, България')
+const MAPS_EMBED = `https://www.google.com/maps?q=${MAPS_QUERY}&output=embed&hl=bg&z=16`
+const MAPS_LINK = `https://www.google.com/maps?q=${MAPS_QUERY}`
 
 /** Работно време на клиниката (Европа/София): Пн–Пт 10–17, Сб 10–14, Нд затворено. */
 function getClinicStatus(): { open: boolean } {
@@ -33,18 +33,29 @@ function getClinicStatus(): { open: boolean } {
 
 const SOCIALS = [
   { icon: Instagram, name: 'Instagram', href: 'https://www.instagram.com/drdiclinic/' },
-  { icon: Facebook, name: 'Facebook', href: 'http://www.facebook.com/DrDiClinic/' },
+  { icon: Facebook, name: 'Facebook', href: 'https://www.facebook.com/DrDiClinic/' },
 ]
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null)
   const [status, setStatus] = useState<{ open: boolean } | null>(() => getClinicStatus())
+  // GDPR: картата на Google се зарежда само при съгласие „всички бисквитки"
+  // или при изрично натискане на „Покажи картата".
+  const [mapAllowed, setMapAllowed] = useState(() => getConsent() === 'all')
+
+  useEffect(() => onConsentChange(v => { if (v === 'all') setMapAllowed(true) }), [])
 
   useEffect(() => {
     const timer = setInterval(() => setStatus(getClinicStatus()), 60_000)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>('.ct-reveal').forEach((el, i) => {
+      const targets = gsap.utils.toArray<HTMLElement>('.ct-reveal')
+      if (reduced) {
+        gsap.set(targets, { opacity: 1, y: 0 })
+        return
+      }
+      targets.forEach((el, i) => {
         gsap.to(el, {
           opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: (i % 2) * 0.1,
           scrollTrigger: { trigger: el, start: 'top 88%' },
@@ -69,7 +80,7 @@ export default function Contact() {
           <div className="ct-reveal opacity-0 order-1" style={{ transform: 'translateY(40px)' }}>
             <div className="flex items-center gap-5 mb-3">
               <h2
-                className="font-extralight uppercase tracking-[0.15em]"
+                className="font-light uppercase tracking-[0.15em]"
                 style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)' }}
               >
                 Свържете се с нас
@@ -115,16 +126,51 @@ export default function Contact() {
               className="w-full h-full overflow-hidden rounded-2xl"
               style={{ border: '1px solid rgba(200,160,94,0.25)', minHeight: '300px' }}
             >
-              {/* TODO: за златен custom pin е нужен Google Maps JS API с ключ */}
-              <iframe
-                title="Локация на Dr. Di Clinic, ул. Любен Каравелов 71, Варна"
-                src={MAPS_EMBED}
-                className="map-dark w-full"
-                style={{ border: 0, minHeight: '300px', height: '100%', display: 'block' }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
+              {mapAllowed ? (
+                <iframe
+                  title="Локация на Dr. Di Clinic, ул. Любен Каравелов 71, Варна"
+                  src={MAPS_EMBED}
+                  className="map-dark w-full"
+                  style={{ border: 0, minHeight: '300px', height: '100%', display: 'block' }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              ) : (
+                /* Placeholder до съгласие: адрес + изрично зареждане на картата */
+                <div
+                  className="w-full h-full flex flex-col items-center justify-center text-center gap-4 p-8"
+                  style={{ minHeight: '300px', background: 'rgba(12,22,20,0.55)' }}
+                >
+                  <MapPin size={26} aria-hidden="true" style={{ color: 'var(--accent-light)' }} />
+                  <p className="text-sm font-light" style={{ color: 'rgba(242,237,226,0.8)', lineHeight: 1.6 }}>
+                    гр. Варна, ул. „Любен Каравелов" № 71, Партер
+                  </p>
+                  <p className="text-[12px] max-w-[300px]" style={{ color: 'rgba(242,237,226,0.55)', lineHeight: 1.6 }}>
+                    Картата се зарежда от Google Maps след вашето изрично действие.
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-3 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setMapAllowed(true)}
+                      className="inline-flex items-center gap-2 px-6 min-h-[44px] rounded-full text-[11px] tracking-[0.14em] uppercase font-medium transition-all duration-300 hover:bg-[#ddbd82]"
+                      style={{ background: '#c8a05e', color: '#0c1614' }}
+                    >
+                      Покажи картата
+                    </button>
+                    <a
+                      href={MAPS_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 min-h-[44px] px-4 text-[11px] tracking-[0.12em] uppercase transition-colors hover:text-[#ddbd82]"
+                      style={{ color: 'rgba(242,237,226,0.75)' }}
+                    >
+                      Отвори в Google Maps
+                      <ExternalLink size={12} aria-hidden="true" />
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
