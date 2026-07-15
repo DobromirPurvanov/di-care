@@ -22,7 +22,11 @@ export default function ProcedureSphere() {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const w = container.clientWidth
     const h = container.clientHeight
-    const sphereRadius = isMobile ? 220 : 320
+    // Адаптивният world radius пази сходен визуален размер на CSS3D текста
+    // както на 320px телефон, така и на по-широк таблет.
+    const sphereRadius = isMobile
+      ? Math.min(360, Math.max(200, w * 0.55))
+      : 320
 
     // GL Renderer за звездите
     const scene = new THREE.Scene()
@@ -38,7 +42,9 @@ export default function ProcedureSphere() {
       const halfH = Math.atan(Math.tan(halfV) * (width / height))
       const distV = sphereRadius / Math.tan(halfV)
       const distH = sphereRadius / Math.tan(halfH)
-      const margin = isMobile ? 1.5 : 1.25
+      // 1.5 оставяше почти една трета празно място отстрани и смаляваше
+      // етикетите. 1.32 дава осезаемо по-голяма сфера, но пази място за тях.
+      const margin = isMobile ? 1.32 : 1.25
       return Math.max(distV, distH) * margin
     }
     camera.position.z = fitDistance(w, h)
@@ -238,13 +244,22 @@ export default function ProcedureSphere() {
         let progress = (dist - minDist) / (maxDist - minDist)
         progress = Math.min(Math.max(progress, 0), 1)
 
+        // На телефон показваме само най-предните 5–8 процедури. Така те могат
+        // да са реално четими и удобни за натискане, без 30 големи етикета да
+        // се застъпват. Останалите се появяват естествено при завъртане.
+        if (isMobile && progress > 0.84 && !isActive) {
+          label.element.style.display = 'none'
+          label.element.style.pointerEvents = 'none'
+          return
+        }
+
         // Предната полусфера остава ясно четима. Към ръба етикетите избледняват.
         // На мобилно фейдът започва по-рано и е по-силен — тесният екран събира
         // 30-те етикета много нагъсто, затова оставяме ясни само предните, а
         // претрупаният външен пръстен се стапя, вместо да се застъпва/отрязва.
         let opacity = 1
-        const fadeStart = isMobile ? 0.6 : 0.85
-        const fadeAmount = isMobile ? 0.9 : 0.35
+        const fadeStart = isMobile ? 0.52 : 0.85
+        const fadeAmount = isMobile ? 0.95 : 0.35
         if (progress > fadeStart) {
           opacity = 1 - ((progress - fadeStart) / (1 - fadeStart)) * fadeAmount
         }
@@ -295,9 +310,8 @@ export default function ProcedureSphere() {
   return (
     <div
       ref={containerRef}
+      className="procedure-sphere"
       style={{
-        width: '100%',
-        height: 'min(80svh, 800px)',
         position: 'relative',
         cursor: 'grab',
         touchAction: 'pan-y',

@@ -14,8 +14,7 @@ type View = 'sphere' | 'list'
 function SphereFallback() {
   return (
     <div
-      className="w-full flex items-center justify-center"
-      style={{ height: 'min(80svh, 800px)' }}
+      className="procedure-sphere flex items-center justify-center"
       aria-label="Зареждане на 3D сферата"
       role="status"
     >
