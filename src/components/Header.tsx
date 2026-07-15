@@ -79,6 +79,7 @@ export default function Header() {
     const lenis = getLenis()
     if (menuOpen) {
       lenis?.stop()
+      document.documentElement.classList.add('mobile-menu-open')
       const id = requestAnimationFrame(() => firstItemRef.current?.focus({ preventScroll: true }))
       const onKey = (e: KeyboardEvent) => {
         if (e.key === 'Escape') setMenuOpen(false)
@@ -87,8 +88,10 @@ export default function Header() {
       return () => {
         cancelAnimationFrame(id)
         window.removeEventListener('keydown', onKey)
+        document.documentElement.classList.remove('mobile-menu-open')
       }
     }
+    document.documentElement.classList.remove('mobile-menu-open')
     lenis?.start()
   }, [menuOpen])
 
@@ -120,7 +123,8 @@ export default function Header() {
   const handleNav = (href: string) => {
     setMenuOpen(false)
     // От подстраница първо се връщаме към началото, после скролваме до котвата.
-    if (onHome) scrollToTarget(href)
+    // Изчакваме менюто да освободи native scroll lock-а преди скрола.
+    if (onHome) requestAnimationFrame(() => scrollToTarget(href))
     else navigate('/', { state: { scrollTo: href } })
   }
 
@@ -146,11 +150,11 @@ export default function Header() {
         }}
       >
         <ScrollProgress />
-        <div className="flex items-center justify-between h-16 lg:h-[72px]" style={{ padding: '0 clamp(1rem, 4vw, 3rem)' }}>
+        <div className="flex items-center justify-between h-16 lg:h-[72px]" style={{ padding: '0 clamp(0.75rem, 4vw, 3rem)' }}>
           <button
             type="button"
             onClick={() => handleNav('#hero')}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center gap-2 cursor-pointer"
             aria-label="Към началото"
           >
             <img
@@ -172,7 +176,7 @@ export default function Header() {
                   key={item.href}
                   type="button"
                   onClick={() => handleNav(item.href)}
-                  className="relative text-xs tracking-[0.15em] uppercase cursor-pointer transition-colors duration-300 py-2"
+                  className="relative min-h-[44px] text-xs tracking-[0.15em] uppercase cursor-pointer transition-colors duration-300 py-2"
                   style={{ color: isActive ? '#f2ede2' : 'rgba(242,237,226,0.72)' }}
                   aria-current={isActive ? 'page' : undefined}
                 >
@@ -191,10 +195,10 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="flex items-center gap-2.5 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <a
               href="tel:+359882708081"
-              className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-[11px] tracking-[0.15em] uppercase border transition-all duration-300 hover:border-[#c8a05e]/60 hover:text-[#ddbd82]"
+              className="hidden md:flex min-h-[44px] items-center gap-2 px-5 py-2 rounded-full text-[11px] tracking-[0.15em] uppercase border transition-all duration-300 hover:border-[#c8a05e]/60 hover:text-[#ddbd82]"
               style={{ borderColor: 'rgba(242,237,226,0.45)', color: '#f2ede2' }}
               aria-label="Обади се на клиниката"
             >
@@ -203,7 +207,7 @@ export default function Header() {
             </a>
             <BookingButton
               variant="primary"
-              className="hidden md:inline-flex px-5 py-2 text-[11px] tracking-[0.15em] uppercase font-medium"
+              className="hidden md:inline-flex min-h-[44px] px-5 py-2 text-[11px] tracking-[0.15em] uppercase font-medium"
               aria-label="Запази час онлайн"
             >
               Запази час
@@ -212,10 +216,11 @@ export default function Header() {
                 крие само в хамбургер менюто. */}
             <BookingButton
               variant="primary"
-              className="md:hidden inline-flex px-4 min-h-[38px] text-[10px] tracking-[0.1em] uppercase font-medium whitespace-nowrap"
+              className="md:hidden inline-flex px-3 min-[360px]:px-4 min-h-[44px] text-[10px] tracking-[0.1em] uppercase font-medium whitespace-nowrap"
               aria-label="Запази час онлайн"
             >
-              Запази час
+              <span className="min-[360px]:hidden">Запази</span>
+              <span className="hidden min-[360px]:inline">Запази час</span>
             </BookingButton>
             <button
               ref={burgerRef}
@@ -241,7 +246,7 @@ export default function Header() {
           (без ръчно жонглиране с tabIndex). */}
       <div
         ref={menuRef}
-        className="fixed inset-0 z-[1005] flex flex-col items-center justify-center gap-8 lg:hidden"
+        className="fixed inset-0 z-[1005] flex flex-col items-center justify-start gap-3 min-[390px]:gap-5 sm:gap-8 overflow-y-auto overscroll-contain px-6 lg:hidden"
         style={{
           clipPath: menuOpen ? 'circle(150% at 95% 5%)' : 'circle(0% at 95% 5%)',
           background: 'rgba(12,22,20,0.92)',
@@ -252,6 +257,8 @@ export default function Header() {
             ? 'clip-path 500ms ease, visibility 0s'
             : 'clip-path 400ms ease, visibility 0s 400ms',
           pointerEvents: menuOpen ? 'auto' : 'none',
+          paddingTop: 'calc(5.5rem + env(safe-area-inset-top))',
+          paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))',
         }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
@@ -264,7 +271,7 @@ export default function Header() {
             ref={i === 0 ? firstItemRef : undefined}
             type="button"
             onClick={() => handleNav(item.href)}
-            className="text-xl tracking-[0.2em] uppercase font-light cursor-pointer transition-all duration-300"
+            className="flex min-h-[44px] items-center text-lg sm:text-xl tracking-[0.16em] sm:tracking-[0.2em] uppercase font-light cursor-pointer transition-all duration-300"
             style={{
               color: effectiveActive === item.href ? '#ddbd82' : '#f2ede2',
               opacity: menuOpen ? 1 : 0,
@@ -281,7 +288,7 @@ export default function Header() {
         <BookingButton
           variant="primary"
           onClick={() => setMenuOpen(false)}
-          className="mt-4 inline-flex px-8 py-3.5 text-xs tracking-[0.18em] uppercase font-medium"
+          className="mt-1 sm:mt-4 inline-flex min-h-[44px] px-8 py-3 text-xs tracking-[0.18em] uppercase font-medium"
           style={{
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
@@ -295,7 +302,7 @@ export default function Header() {
         <a
           href="tel:+359882708081"
           onClick={() => setMenuOpen(false)}
-          className="text-sm tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]"
+          className="inline-flex min-h-[44px] items-center text-sm tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]"
           style={{
             color: 'rgba(242,237,226,0.7)',
             opacity: menuOpen ? 1 : 0,
@@ -307,7 +314,7 @@ export default function Header() {
         </a>
 
         <span
-          className="mt-4 text-[10px] tracking-[0.3em] uppercase"
+          className="hidden min-[360px]:block mt-1 sm:mt-4 text-center text-[10px] tracking-[0.24em] sm:tracking-[0.3em] uppercase"
           style={{
             color: 'rgba(242,237,226,0.25)',
             opacity: menuOpen ? 1 : 0,

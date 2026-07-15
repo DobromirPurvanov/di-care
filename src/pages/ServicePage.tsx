@@ -63,14 +63,14 @@ export default function ServicePage() {
   return (
     <main
       className="relative z-10"
-      style={{ padding: 'clamp(6.5rem, 14vh, 10rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 9vh, 7rem)' }}
+      style={{ padding: 'clamp(6rem, 14vh, 10rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 9vh, 7rem)' }}
     >
       <div className="mx-auto" style={{ maxWidth: '760px' }}>
         {/* Обратна навигация */}
         <Link
           to="/"
           state={{ scrollTo: '#services' }}
-          className="inline-flex items-center gap-2 text-xs tracking-[0.14em] uppercase mb-6 transition-colors hover:text-[#ddbd82]"
+          className="inline-flex min-h-[44px] items-center gap-2 text-xs tracking-[0.14em] uppercase mb-6 transition-colors hover:text-[#ddbd82]"
           style={{ color: 'rgba(242,237,226,0.7)' }}
         >
           <ArrowLeft size={14} aria-hidden="true" />
@@ -86,7 +86,7 @@ export default function ServicePage() {
             border: '1px solid rgba(200,160,94,0.16)',
             borderRadius: '20px',
             boxShadow: '0 24px 70px rgba(0,0,0,0.5)',
-            padding: 'clamp(1.75rem, 4.5vw, 3.25rem)',
+            padding: 'clamp(1.25rem, 4.5vw, 3.25rem)',
           }}
         >
           {/* Заглавие */}
@@ -181,14 +181,14 @@ export default function ServicePage() {
             <BookingButton
               variant="primary"
               service={category.label}
-              className="inline-flex px-7 py-3.5 text-xs tracking-[0.16em] uppercase font-medium"
+              className="inline-flex w-full sm:w-auto min-h-[48px] px-7 py-3.5 text-xs tracking-[0.16em] uppercase font-medium"
             >
               Запази час
               <ArrowRight size={15} aria-hidden="true" />
             </BookingButton>
             <a
               href="tel:+359882708081"
-              className="inline-flex items-center gap-2 text-sm tracking-[0.05em] transition-colors hover:text-[#ddbd82]"
+              className="inline-flex min-h-[44px] items-center gap-2 text-sm tracking-[0.05em] transition-colors hover:text-[#ddbd82]"
               style={{ color: 'rgba(242,237,226,0.8)' }}
             >
               Обади се: +359 88 270 8081

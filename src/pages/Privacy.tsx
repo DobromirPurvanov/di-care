@@ -109,13 +109,13 @@ export default function Privacy() {
   return (
     <main
       className="relative z-10"
-      style={{ padding: 'clamp(6.5rem, 14vh, 10rem) clamp(1.25rem, 4vw, 3rem) clamp(4rem, 9vh, 7rem)' }}
+      style={{ padding: 'clamp(6rem, 14vh, 10rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 9vh, 7rem)' }}
     >
       <div className="mx-auto" style={{ maxWidth: '760px' }}>
         {/* Обратна навигация */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-xs tracking-[0.14em] uppercase mb-6 transition-colors hover:text-[#ddbd82]"
+          className="inline-flex min-h-[44px] items-center gap-2 text-xs tracking-[0.14em] uppercase mb-6 transition-colors hover:text-[#ddbd82]"
           style={{ color: 'rgba(242,237,226,0.7)' }}
         >
           <ArrowLeft size={14} aria-hidden="true" />
@@ -131,7 +131,7 @@ export default function Privacy() {
             border: '1px solid rgba(200,160,94,0.16)',
             borderRadius: '20px',
             boxShadow: '0 24px 70px rgba(0,0,0,0.5)',
-            padding: 'clamp(1.75rem, 4.5vw, 3.25rem)',
+            padding: 'clamp(1.25rem, 4.5vw, 3.25rem)',
           }}
         >
           <header>

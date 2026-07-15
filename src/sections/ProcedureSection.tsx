@@ -107,12 +107,12 @@ export default function ProcedureSection() {
       id="procedures"
       ref={sectionRef}
       className="relative z-10"
-      style={{ padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)' }}
+      style={{ padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)' }}
     >
       <div className="max-w-6xl mx-auto">
         <div
           ref={headerRef}
-          className="flex flex-col items-center opacity-0 mb-10"
+          className="flex flex-col items-center opacity-0 mb-8 sm:mb-10"
           style={{ transform: 'translateY(30px)' }}
         >
           {/* Златна емблема */}
@@ -157,7 +157,7 @@ export default function ProcedureSection() {
           />
 
           <p
-            className="text-center text-[11px] tracking-[0.22em] uppercase"
+            className="max-w-[30rem] text-center text-[11px] leading-relaxed tracking-[0.15em] sm:tracking-[0.22em] uppercase"
             style={{ color: 'rgba(242,237,226,0.7)', textShadow: '0 1px 12px rgba(0,0,0,0.5)' }}
           >
             {hint}

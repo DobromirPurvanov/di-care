@@ -24,7 +24,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="relative z-10" style={{ padding: '4rem clamp(1.5rem, 4vw, 3rem)' }}>
+    <footer className="relative z-10" style={{ padding: 'clamp(3.5rem, 8vh, 4rem) clamp(1rem, 4vw, 3rem)' }}>
       {/* Gradient top border */}
       <div
         aria-hidden="true"
@@ -70,7 +70,7 @@ export default function Footer() {
                 key={l.href}
                 type="button"
                 onClick={() => goToAnchor(l.href)}
-                className="text-xs tracking-[0.12em] uppercase cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] text-left py-1"
+                className="inline-flex min-h-[44px] items-center text-xs tracking-[0.12em] uppercase cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] text-left"
                 style={{ color: 'rgba(242,237,226,0.7)' }}
               >
                 {l.label}
@@ -83,13 +83,13 @@ export default function Footer() {
             <span className="text-[10px] tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(242,237,226,0.5)' }}>
               Информация
             </span>
-            <Link to="/poveritelnost" className="text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82] py-1" style={{ color: 'rgba(242,237,226,0.7)' }}>
+            <Link to="/poveritelnost" className="inline-flex min-h-[44px] items-center text-xs tracking-[0.12em] transition-colors duration-300 hover:text-[#ddbd82]" style={{ color: 'rgba(242,237,226,0.7)' }}>
               Политика за лични данни
             </Link>
             <button
               type="button"
               onClick={openConsentBanner}
-              className="text-xs tracking-[0.12em] cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] py-1 text-center md:text-left"
+              className="inline-flex min-h-[44px] items-center text-xs tracking-[0.12em] cursor-pointer transition-colors duration-300 hover:text-[#ddbd82] text-center md:text-left"
               style={{ color: 'rgba(242,237,226,0.7)' }}
             >
               Настройки на бисквитките

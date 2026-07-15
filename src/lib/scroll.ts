@@ -20,7 +20,9 @@ export function scrollToTarget(target: string | HTMLElement, offset = -72) {
     return
   }
   const el = typeof target === 'string' ? document.querySelector(target) : target
-  el?.scrollIntoView({ behavior: 'smooth' })
+  if (!el) return
+  const top = window.scrollY + el.getBoundingClientRect().top + offset
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
 }
 
 /** Плавен скрол до конкретна позиция в пиксели. */

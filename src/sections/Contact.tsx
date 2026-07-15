@@ -71,7 +71,7 @@ export default function Contact() {
       id="contact"
       ref={sectionRef}
       className="relative z-10"
-      style={{ padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)' }}
+      style={{ padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)' }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Двуколонен layout: форма | карта */}
@@ -107,7 +107,7 @@ export default function Contact() {
               </div>
               <BookingButton
                 variant="primary"
-                className="inline-flex mt-4 px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium"
+                className="inline-flex w-full sm:w-auto mt-4 min-h-[48px] px-7 py-3.5 text-[11px] tracking-[0.15em] uppercase font-medium"
               >
                 Запази час онлайн
                 <ArrowRight size={14} aria-hidden="true" />
@@ -139,7 +139,7 @@ export default function Contact() {
               ) : (
                 /* Placeholder до съгласие: адрес + изрично зареждане на картата */
                 <div
-                  className="w-full h-full flex flex-col items-center justify-center text-center gap-4 p-8"
+                  className="w-full h-full flex flex-col items-center justify-center text-center gap-4 p-5 sm:p-8"
                   style={{ minHeight: '300px', background: 'rgba(12,22,20,0.55)' }}
                 >
                   <MapPin size={26} aria-hidden="true" style={{ color: 'var(--accent-light)' }} />
@@ -176,7 +176,7 @@ export default function Contact() {
         </div>
 
         {/* Контактни блокове */}
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden" style={{ background: 'rgba(242,237,226,0.06)' }}>
+        <div className="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden" style={{ background: 'rgba(242,237,226,0.06)' }}>
           {[
             { icon: MapPin, label: 'Адрес', value: 'гр. Варна, ул. Любен Каравелов № 71, Партер', href: undefined as string | undefined },
             { icon: Phone, label: 'Телефон', value: '+359 882 708 081', href: 'tel:+359882708081' },
@@ -185,7 +185,7 @@ export default function Contact() {
           ].map((item, i) => (
             <div
               key={i}
-              className="ct-reveal flex items-start gap-4 p-6 lg:p-7 opacity-0"
+              className="ct-reveal flex items-start gap-4 p-5 sm:p-6 lg:p-7 opacity-0"
               style={{ background: 'var(--bg)', transform: 'translateY(25px)' }}
             >
               <item.icon size={18} className="flex-none mt-[2px]" style={{ color: 'var(--accent-light)' }} aria-hidden="true" />
@@ -214,7 +214,7 @@ export default function Contact() {
                 ) : item.href ? (
                   <a
                     href={item.href}
-                    className="text-sm font-light break-words transition-colors duration-300 hover:text-[#ddbd82]"
+                    className="inline-flex min-h-[44px] max-w-full items-center text-sm font-light break-words transition-colors duration-300 hover:text-[#ddbd82]"
                     style={{ color: 'rgba(242,237,226,0.8)' }}
                   >
                     {item.value}
@@ -247,7 +247,7 @@ export default function Contact() {
               <s.icon size={18} className="transition-colors duration-300 group-hover:!text-[#c8a05e]" style={{ color: 'rgba(242,237,226,0.55)' }} aria-hidden="true" />
               <span
                 role="tooltip"
-                className="pointer-events-none absolute left-1/2 bottom-full mb-2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1.5 text-[10px] tracking-[0.08em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
+                className="social-tooltip pointer-events-none absolute left-1/2 bottom-full mb-2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1.5 text-[10px] tracking-[0.08em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
                 style={{ background: 'rgba(12,22,20,0.92)', border: '1px solid rgba(200,160,94,0.3)', color: 'rgba(242,237,226,0.85)' }}
               >
                 {s.name}

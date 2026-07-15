@@ -72,7 +72,7 @@ export default function WhyUs() {
       ref={sectionRef}
       id="about"
       className="relative z-10"
-      style={{ padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)' }}
+      style={{ padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)' }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Въведение */}
@@ -96,12 +96,12 @@ export default function WhyUs() {
         </div>
 
         {/* Стълбове */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-9 sm:mt-12">
           {pillars.map((p, i) => (
             <div
               key={i}
               ref={el => { if (el) cardsRef.current[i] = el }}
-              className="rounded-2xl p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#c8a05e]/40"
+              className="rounded-2xl p-5 sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#c8a05e]/40"
               style={{ background: 'rgba(242,237,226,0.03)', border: '1px solid rgba(200,160,94,0.16)' }}
             >
               <span
@@ -113,7 +113,7 @@ export default function WhyUs() {
               <h3 className="font-serif-luxe" style={{ fontSize: '20px', lineHeight: 1.3, color: '#e7cfa0' }}>
                 {p.title}
               </h3>
-              <p className="mt-3" style={{ fontSize: '14px', lineHeight: 1.7, color: 'rgba(242,237,226,0.72)' }}>
+              <p className="mt-3" style={{ fontSize: '15px', lineHeight: 1.7, color: 'rgba(242,237,226,0.76)' }}>
                 {p.text}
               </p>
             </div>

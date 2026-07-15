@@ -20,6 +20,9 @@
 
   html {
     scroll-behavior: auto; /* Lenis поема плавния скрол */
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   html.lenis, html.lenis body { height: auto; }
@@ -35,6 +38,28 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+  }
+
+  /* Native mobile scroll се заключва отделно за менюто и Cal модала, за да
+     не си пречат, ако единият слой се затвори преди другия. */
+  html.mobile-menu-open,
+  html.mobile-menu-open body,
+  html.cal-modal-open,
+  html.cal-modal-open body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  img,
+  svg,
+  canvas {
+    max-width: 100%;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   ::selection {
@@ -199,7 +224,11 @@
     letter-spacing: 0.05em;
     color: #ddbd82;
     transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    white-space: nowrap;
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
   }
 
   .proc-chip:hover,
@@ -348,6 +377,26 @@
 @media (min-width: 768px) {
   iframe.cal-embed {
     clip-path: inset(0 0 72px 0);
+  }
+}
+
+@media (max-width: 639px) {
+  /* По-спокойно и по-икономично на тъч устройства, без да губим сиянието. */
+  .glow-pulse {
+    animation: none;
+    text-shadow: 0 0 44px rgba(200,160,94,0.35), 0 0 90px rgba(200,160,94,0.12);
+  }
+}
+
+@media (hover: none) {
+  .brand-tooltip,
+  .social-tooltip {
+    display: none;
+  }
+
+  .svc-card:hover,
+  .eq-card:hover {
+    transform: none !important;
   }
 }
 

@@ -67,7 +67,7 @@ export default function Hero() {
       id="hero"
       ref={sectionRef}
       className="relative z-10 flex flex-col items-center justify-center text-center overflow-hidden"
-      style={{ height: '100svh', minHeight: '600px' }}
+      style={{ height: '100svh', minHeight: 'min(600px, 100svh)' }}
     >
       {/* Двоен gradient за дълбочина над анимирания shader фон */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -75,19 +75,19 @@ export default function Hero() {
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(200,160,94,0.06) 0%, transparent 55%)' }} />
       </div>
 
-      <h1 className="relative px-6 m-0" style={{ marginTop: '-2vh' }}>
+      <h1 className="relative w-full max-w-5xl px-4 sm:px-6 m-0" style={{ marginTop: '-2vh' }}>
         <span
           ref={line1Ref}
-          className="block font-serif-luxe uppercase tracking-[0.18em] leading-[1.12] opacity-0"
-          style={{ fontSize: 'clamp(1.5rem, 5.2vw, 3.9rem)', fontWeight: 400, transform: 'translateY(50px)' }}
+          className="block font-serif-luxe uppercase tracking-[0.12em] sm:tracking-[0.18em] leading-[1.12] opacity-0"
+          style={{ fontSize: 'clamp(1.3rem, 6vw, 3.9rem)', fontWeight: 400, transform: 'translateY(50px)' }}
         >
           БЪДЕЩЕТО
         </span>
         <span
           ref={line2Ref}
-          className="block font-serif-luxe uppercase tracking-[0.14em] leading-[1.12] opacity-0"
+          className="block font-serif-luxe uppercase tracking-[0.08em] sm:tracking-[0.14em] leading-[1.12] opacity-0"
           style={{
-            fontSize: 'clamp(1.5rem, 5.2vw, 3.9rem)',
+            fontSize: 'clamp(1.3rem, 6vw, 3.9rem)',
             fontWeight: 500,
             transform: 'translateY(50px)',
             textShadow: '0 0 40px rgba(242,237,226,0.12)',
@@ -97,25 +97,25 @@ export default function Hero() {
         </span>
         <span
           ref={charsWrapRef}
-          className="block font-serif-luxe uppercase tracking-[0.14em] leading-[1.12] text-gradient glow-text glow-pulse opacity-0"
-          style={{ fontSize: 'clamp(1.5rem, 5.2vw, 3.9rem)', fontWeight: 600, transform: 'translateY(50px)' }}
+          className="block font-serif-luxe uppercase tracking-[0.09em] sm:tracking-[0.14em] leading-[1.12] text-gradient glow-text glow-pulse opacity-0"
+          style={{ fontSize: 'clamp(1.3rem, 6vw, 3.9rem)', fontWeight: 600, transform: 'translateY(50px)' }}
         >
           {lastLine}
         </span>
       </h1>
 
-      <div className="relative px-6">
+      <div className="relative w-full px-4 sm:px-6">
         {/* декоративен контейнер за брандовете под заглавието */}
 
         <div
           ref={brandsRef}
-          className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 opacity-0 mt-10 md:mt-14"
+          className="flex flex-wrap items-center justify-center gap-x-4 min-[360px]:gap-x-6 sm:gap-x-8 gap-y-3 opacity-0 mt-8 sm:mt-10 md:mt-14"
           style={{ transform: 'translateY(15px)' }}
         >
           {BRANDS.map(b => (
             <span key={b.name} className="brand-item group relative opacity-0" style={{ transform: 'translateY(10px)' }}>
               <span
-                className="text-[11px] tracking-[0.2em] uppercase pb-1 cursor-default transition-all duration-300 group-hover:text-[#ddbd82]"
+                className="text-[10px] sm:text-[11px] tracking-[0.14em] sm:tracking-[0.2em] uppercase pb-1 cursor-default transition-all duration-300 group-hover:text-[#ddbd82]"
                 style={{ color: 'rgba(242,237,226,0.6)', borderBottom: '1px solid rgba(242,237,226,0.12)' }}
               >
                 {b.name}
@@ -123,7 +123,7 @@ export default function Hero() {
               {/* Мини tooltip */}
               <span
                 role="tooltip"
-                className="pointer-events-none absolute left-1/2 bottom-full mb-3 -translate-x-1/2 whitespace-nowrap px-3 py-2 rounded-lg text-[10px] tracking-[0.06em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
+                className="brand-tooltip pointer-events-none absolute left-1/2 bottom-full mb-3 -translate-x-1/2 whitespace-nowrap px-3 py-2 rounded-lg text-[10px] tracking-[0.06em] opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
                 style={{
                   background: 'rgba(12,22,20,0.92)',
                   border: '1px solid rgba(200,160,94,0.3)',
@@ -141,7 +141,7 @@ export default function Hero() {
       <button
         type="button"
         ref={scrollHintRef}
-        className="group absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 cursor-pointer z-20"
+        className="group absolute left-1/2 -translate-x-1/2 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center gap-1.5 opacity-0 cursor-pointer z-20"
         style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
         onClick={() => scrollToTarget('#procedures')}
         aria-label="Скролни надолу към процедурите"

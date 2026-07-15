@@ -10,7 +10,8 @@ export default function ShaderBackground() {
     if (!gl) return
 
     let animId: number
-    const dpr = Math.min(window.devicePixelRatio, 1.5)
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+    const dpr = Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5)
 
     function resize() {
       if (!canvas || !gl) return
@@ -132,6 +133,8 @@ export default function ShaderBackground() {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const startTime = performance.now()
+    const frameInterval = isMobile ? 1000 / 30 : 0
+    let lastFrame = 0
 
     const drawFrame = () => {
       const t = (performance.now() - startTime) / 1000
@@ -139,14 +142,17 @@ export default function ShaderBackground() {
       gl!.uniform2f(uRes, canvas!.width, canvas!.height)
       gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4)
     }
-    const loop = () => {
-      drawFrame()
+    const loop = (now: number) => {
+      if (!frameInterval || now - lastFrame >= frameInterval) {
+        drawFrame()
+        lastFrame = now
+      }
       animId = requestAnimationFrame(loop)
     }
 
     // При reduced-motion рисуваме един статичен кадър, без анимационен цикъл.
     if (reduced) drawFrame()
-    else loop()
+    else animId = requestAnimationFrame(loop)
 
     // Паузираме, докато табът е скрит — пести батерия/топлина на мобилни.
     const onVisibility = () => {

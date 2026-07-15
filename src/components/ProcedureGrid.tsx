@@ -140,9 +140,10 @@ export default function ProcedureGrid() {
           трансформиран родител (GSAP transform чупи position: fixed). */}
       {createPortal(
         <div
-          className="fixed left-3 right-3 z-[1010] lg:hidden transition-all duration-[400ms]"
+          className="fixed left-3 right-3 z-[1010] lg:hidden overflow-y-auto overscroll-contain transition-all duration-[400ms]"
           style={{
             bottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
+            maxHeight: 'calc(100svh - 5.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
             opacity: active ? 1 : 0,
             transform: active ? 'translateY(0)' : 'translateY(14px)',
             pointerEvents: active ? 'auto' : 'none',
@@ -152,6 +153,7 @@ export default function ProcedureGrid() {
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
             boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+            WebkitOverflowScrolling: 'touch',
           }}
           role="region"
           aria-live="polite"

@@ -75,7 +75,7 @@ export default function Equipment() {
       ref={sectionRef}
       className="relative z-10"
       style={{
-        padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)',
+        padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)',
         background: 'linear-gradient(180deg, transparent 0%, rgba(200,160,94,0.03) 40%, transparent 100%)',
       }}
     >
@@ -87,7 +87,7 @@ export default function Equipment() {
         >
           Апаратура
         </h2>
-        <p className="text-center text-xs tracking-[0.15em] uppercase mb-16" style={{ color: 'rgba(242,237,226,0.6)' }}>
+        <p className="text-center text-xs tracking-[0.15em] uppercase mb-10 sm:mb-16" style={{ color: 'rgba(242,237,226,0.6)' }}>
           Световно признати лазерни системи
         </p>
 
@@ -95,7 +95,7 @@ export default function Equipment() {
           {equipment.map((eq, i) => (
             <div
               key={i}
-              className="eq-card group flex flex-col sm:flex-row overflow-hidden opacity-0 rounded-2xl border transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-[3px]"
+              className="eq-card group grid grid-cols-[84px_minmax(0,1fr)] sm:flex sm:flex-row overflow-hidden opacity-0 rounded-2xl border transition-all duration-[400ms] hover:border-[#c8a05e]/40 hover:-translate-y-[3px]"
               style={{
                 background: 'rgba(242,237,226,0.04)',
                 borderColor: 'rgba(242,237,226,0.06)',
@@ -113,25 +113,24 @@ export default function Equipment() {
               }}
             >
               <div
-                className="sm:w-2/5 overflow-hidden flex items-center justify-center p-4 sm:border-r"
+                className="min-w-0 sm:w-2/5 overflow-hidden flex items-center justify-center p-3 sm:p-4 border-r"
                 style={{
-                  minHeight: '200px',
                   background: 'radial-gradient(120% 100% at 50% 0%, rgba(200,160,94,0.08), rgba(242,237,226,0.02))',
                   borderColor: 'rgba(242,237,226,0.05)',
                 }}
               >
                 <span
-                  className="flex items-center justify-center w-20 h-20 rounded-full transition-transform duration-500 group-hover:scale-110"
+                  className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full transition-transform duration-500 group-hover:scale-110"
                   style={{ border: '1px solid rgba(200,160,94,0.3)', background: 'rgba(12,22,20,0.4)' }}
                 >
-                  <eq.Icon size={34} strokeWidth={1.4} aria-hidden="true" style={{ color: 'var(--accent-light)' }} />
+                  <eq.Icon className="w-6 h-6 sm:w-[34px] sm:h-[34px]" strokeWidth={1.4} aria-hidden="true" style={{ color: 'var(--accent-light)' }} />
                 </span>
               </div>
-              <div className="sm:w-3/5 p-6 flex flex-col justify-center">
+              <div className="min-w-0 sm:w-3/5 p-5 sm:p-6 flex flex-col justify-center">
                 <h3 className="font-light text-sm tracking-[0.1em] uppercase group-hover:text-[#ddbd82] transition-colors">
                   {eq.name}
                 </h3>
-                <p className="text-xs mt-2 leading-relaxed" style={{ color: 'rgba(242,237,226,0.72)' }}>
+                <p className="text-sm mt-2 leading-relaxed" style={{ color: 'rgba(242,237,226,0.74)' }}>
                   {eq.desc}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">

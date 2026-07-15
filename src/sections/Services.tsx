@@ -41,14 +41,14 @@ export default function Services() {
       ref={sectionRef}
       className="relative z-10"
       style={{
-        padding: 'clamp(5rem, 10vh, 8rem) clamp(1.5rem, 4vw, 3rem)',
+        padding: 'clamp(4.5rem, 10vh, 8rem) clamp(1rem, 4vw, 3rem)',
         background: 'linear-gradient(180deg, transparent 0%, rgba(200,160,94,0.03) 40%, transparent 100%)',
       }}
     >
       <div className="max-w-6xl mx-auto">
         <h2
           ref={titleRef}
-          className="text-center font-light uppercase tracking-[0.15em] opacity-0 mb-16"
+          className="text-center font-light uppercase tracking-[0.15em] opacity-0 mb-10 sm:mb-16"
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', transform: 'translateY(40px)' }}
         >
           Нашите услуги
@@ -96,31 +96,31 @@ export default function Services() {
                   {count} {count === 1 ? 'процедура' : 'процедури'}
                 </span>
 
-                <div className="relative z-10 h-full flex flex-col justify-end p-6" style={{ minHeight: '260px' }}>
+                <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6" style={{ minHeight: '260px' }}>
                   <Link to={`/uslugi/${cat.slug}`} className="block" aria-label={`${cat.label}: ${tagline}`}>
                     <h3 className="font-light text-lg tracking-wider uppercase group-hover:text-[#ddbd82] transition-colors duration-300">
                       {cat.label}
                     </h3>
-                    <p className="text-sm mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.68)' }}>
+                    <p className="text-[15px] mt-2 font-light leading-relaxed" style={{ color: 'rgba(242,237,226,0.72)' }}>
                       {tagline}
                     </p>
                   </Link>
 
                   {/* Два CTA-та: детайли + директно запазване на час */}
-                  <div className="flex items-center gap-4 mt-5">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4">
                     <Link
                       to={`/uslugi/${cat.slug}`}
-                      className="inline-flex items-center gap-2 text-xs tracking-wider uppercase transition-colors hover:text-[#ddbd82]"
+                      className="inline-flex min-h-[44px] items-center gap-2 text-xs tracking-wider uppercase transition-colors hover:text-[#ddbd82]"
                       style={{ color: 'var(--text-secondary)' }}
                     >
                       Научете повече
                       <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-[4px]" aria-hidden="true" />
                     </Link>
-                    <span aria-hidden="true" className="w-px h-3.5" style={{ background: 'rgba(242,237,226,0.15)' }} />
+                    <span aria-hidden="true" className="hidden min-[360px]:block w-px h-3.5" style={{ background: 'rgba(242,237,226,0.15)' }} />
                     <BookingButton
                       variant="link"
                       service={cat.label}
-                      className="inline-flex text-xs tracking-wider uppercase font-medium"
+                      className="inline-flex min-h-[44px] text-xs tracking-wider uppercase font-medium"
                       style={{ color: '#c8a05e' }}
                     >
                       Запази час

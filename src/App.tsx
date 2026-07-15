@@ -46,7 +46,10 @@ export default function App() {
   // Lenis smooth scroll, синхронизиран с GSAP ScrollTrigger
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) return
+    const touchDevice = window.matchMedia('(pointer: coarse)').matches
+    // На тъч устройства native scroll е по-предвидим, пести батерия и не се
+    // конкурира с жестовете на браузъра. scroll.ts запазва плавните котви.
+    if (reduced || touchDevice) return
 
     const lenis = new Lenis({
       duration: 0.9,
@@ -71,9 +74,17 @@ export default function App() {
   // зарежда предварително САМО при прието съгласие за всички бисквитки —
   // иначе се тегли чак при изричен клик на „Запази час" (в BookingButton).
   useEffect(() => {
+    const lockNativeScroll = () => document.documentElement.classList.add('cal-modal-open')
+    const unlockNativeScroll = () => document.documentElement.classList.remove('cal-modal-open')
     const stopWatching = watchCalModal({
-      onOpen: () => getLenis()?.stop(),
-      onClose: () => getLenis()?.start(),
+      onOpen: () => {
+        getLenis()?.stop()
+        lockNativeScroll()
+      },
+      onClose: () => {
+        getLenis()?.start()
+        unlockNativeScroll()
+      },
     })
 
     if (getConsent() === 'all') loadCalScript()
@@ -84,6 +95,7 @@ export default function App() {
     return () => {
       stopWatching()
       offConsent()
+      unlockNativeScroll()
     }
   }, [])
 

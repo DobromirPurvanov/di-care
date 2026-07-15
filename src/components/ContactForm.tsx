@@ -293,7 +293,7 @@ export default function ContactForm() {
 
       {/* GDPR */}
       <div className="field-wrap">
-        <label htmlFor="cf-gdpr" className="flex items-start gap-3 cursor-pointer select-none">
+        <label htmlFor="cf-gdpr" className="flex min-h-[44px] items-start gap-3 py-1 cursor-pointer select-none">
           <input
             id="cf-gdpr"
             type="checkbox"
