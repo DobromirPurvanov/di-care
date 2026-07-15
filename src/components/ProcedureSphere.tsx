@@ -26,8 +26,22 @@ export default function ProcedureSphere() {
 
     // GL Renderer за звездите
     const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(70, w / h, 0.1, 2000)
-    camera.position.z = isMobile ? 420 : 580
+    const FOV = 70
+    const camera = new THREE.PerspectiveCamera(FOV, w / h, 0.1, 2000)
+
+    // Разстоянието на камерата се смята така, че цялата сфера (плюс етикетите)
+    // да се побира в кадъра — И по височина, И по ширина. На тесни мобилни
+    // екрани ограничението е ШИРИНАТА: с фиксирано разстояние страничните
+    // етикети излизаха извън кадъра и се отрязваха — точно оттам „се чупеше".
+    function fitDistance(width: number, height: number) {
+      const halfV = (FOV * Math.PI) / 180 / 2
+      const halfH = Math.atan(Math.tan(halfV) * (width / height))
+      const distV = sphereRadius / Math.tan(halfV)
+      const distH = sphereRadius / Math.tan(halfH)
+      const margin = isMobile ? 1.5 : 1.25
+      return Math.max(distV, distH) * margin
+    }
+    camera.position.z = fitDistance(w, h)
 
     const glRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     glRenderer.setSize(w, h)
@@ -51,6 +65,13 @@ export default function ProcedureSphere() {
     controls.minPolarAngle = Math.PI * 0.2
     controls.maxPolarAngle = Math.PI * 0.8
     controls.enableZoom = false
+
+    // OrbitControls слага touch-action:none на своя елемент, което „заключва"
+    // вертикалния скрол на страницата, докато пръстът е върху сферата (а тя
+    // заема ~80% от височината на екрана). Връщаме pan-y: вертикалният жест
+    // скролва страницата, хоризонталният върти сферата — така мобилният скрол
+    // вече не се „чупи".
+    cssRenderer.domElement.style.touchAction = 'pan-y'
 
     // Спираме въртенето докато мишката е над сферата — така всеки етикет
     // стои неподвижно и е лесен за клик.
@@ -217,10 +238,16 @@ export default function ProcedureSphere() {
         let progress = (dist - minDist) / (maxDist - minDist)
         progress = Math.min(Math.max(progress, 0), 1)
 
-        // Предната полусфера остава ясно четима. Към самия ръб етикетите леко
-        // избледняват, но пазят четим минимум (~0.65), за да не се губят на фона.
+        // Предната полусфера остава ясно четима. Към ръба етикетите избледняват.
+        // На мобилно фейдът започва по-рано и е по-силен — тесният екран събира
+        // 30-те етикета много нагъсто, затова оставяме ясни само предните, а
+        // претрупаният външен пръстен се стапя, вместо да се застъпва/отрязва.
         let opacity = 1
-        if (progress > 0.85) opacity = 1 - ((progress - 0.85) / 0.15) * 0.35
+        const fadeStart = isMobile ? 0.6 : 0.85
+        const fadeAmount = isMobile ? 0.9 : 0.35
+        if (progress > fadeStart) {
+          opacity = 1 - ((progress - fadeStart) / (1 - fadeStart)) * fadeAmount
+        }
         if (isActive) opacity = Math.max(opacity, 1)
 
         if (opacity <= 0.02) {
@@ -243,6 +270,9 @@ export default function ProcedureSphere() {
       const nw = container!.clientWidth
       const nh = container!.clientHeight
       camera.aspect = nw / nh
+      // Пресмятаме наново разстоянието — при завъртане на телефона или скриване
+      // на адрес-лентата съотношението се променя и сферата пак трябва да пасне.
+      camera.position.z = fitDistance(nw, nh)
       camera.updateProjectionMatrix()
       glRenderer.setSize(nw, nh)
       cssRenderer.setSize(nw, nh)
